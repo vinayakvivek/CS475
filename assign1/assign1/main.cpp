@@ -21,33 +21,62 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-int WIDTH = 800, HEIGHT = 600;
+int WIDTH = 800, HEIGHT = 600, DEPTH = 600;
 
-int num_vertices = 6;
-
-//float points[] = {
-//	10.0f,  500.0f,  0.0f, 1.0f,
-//	800.0f, 100.0f,  0.0f, 1.0f,
-//	0.0f, 0.0f,  0.0f, 1.0f,
-//};
+//int num_vertices = 7;
+//int buffer_size;
+//int index_buffer_size;
 //
-//float points2[] = {
-//	10.0f,  500.0f,  0.0f, 1.0f,
-//	400.0f, 100.0f,  0.0f, 1.0f,
-//	0.0f, 0.0f,  0.0f, 1.0f,
-//};
+//std::vector<GLfloat> points({
+//	-100.0f,  100.0f,  100.0f, 1.0f,
+//	-100.0f, -100.0f,  100.0f, 1.0f,
+//	100.0f, 100.0f,  100.0f, 1.0f,
+//	100.0f, -100.0f,  100.0f, 1.0f,
+//	
+//	-100.0f, -100.0f, -100.0f, 1.0f,
+//	-100.0f, 100.0f, -100.0f, 1.0f,
+//	
+//	100.0, 100.0f, -100.0f, 1.0f,
+//});
+//
+//std::vector<GLuint> indices({
+//	0, 1, 2,
+//	2, 1, 3,
+//	
+//	0, 4, 1,
+//	0, 5, 4,
+//	
+//	0, 2, 5,
+//	2, 6, 5,
+//});
+//
+//std::vector<GLfloat> colors({
+//	0.0, 0.0, 0.0, 1.0,
+//	1.0, 0.0, 0.0, 1.0,
+//	1.0, 1.0, 0.0, 1.0,
+//	1.0, 0.5, 0.5, 1.0,
+//	
+//	1.0, 0.25, 0.75, 1.0,
+//	0.30, 0.8, 0.5, 1.0,
+//	
+//	0.50, 0.2, 0.5, 1.0,
+//});
 
-std::vector<float> points({
-	10.0f,  200.0f,  0.0f, 1.0f,
-	400.0f, 100.0f,  0.0f, 1.0f,
-	10.0f, 10.0f,  0.0f, 1.0f,
-	500.0f,  200.0f,  0.0f, 1.0f,
-	400.0f, 100.0f,  0.0f, 1.0f,
-	400.0f, 10.0f,  0.0f, 1.0f,
-});
+int num_vertices = 0;
+unsigned long buffer_size, index_buffer_size;
+
+std::vector<GLfloat> points;
+std::vector<GLuint> indices;
+std::vector<GLfloat> colors;
 
 GLuint shaderProgram;
 GLuint vbo, vao;
+GLint vColor, vPosition;
+
+// Rotation Parameters
+GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
+GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
+
 
 glm::mat4 translate_matrix;
 glm::mat4 rotation_matrix;
@@ -55,21 +84,17 @@ glm::mat4 ortho_matrix;
 glm::mat4 modelview_matrix;
 GLuint uModelViewMatrix;
 
-void initBuffersGL(void)
-{
-	//Ask GL for a Vertex Attribute Object (vao)
+void initBuffersGL(void) {
+	
+	buffer_size = points.size() * sizeof(GLfloat);
+	index_buffer_size = indices.size() * sizeof(GLuint);
+	
 	glGenVertexArrays (1, &vao);
-	//Set it as the current array to be used by binding it
 	glBindVertexArray (vao);
 	
-	//Ask GL for a Vertex Buffer Object (vbo)
 	glGenBuffers (1, &vbo);
-	//Set it as the current buffer to be used by binding it
 	glBindBuffer (GL_ARRAY_BUFFER, vbo);
-	//Copy the points into the current buffer
-	glBufferData (GL_ARRAY_BUFFER, num_vertices * 4 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
-	// glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
-	// glBufferSubData(GL_ARRAY_BUFFER, sizeof(v_positions), sizeof(v_colors), v_colors);
+	glBufferData (GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
 	
 	// Load shaders and use the resulting shader program
 	std::string vertex_shader_file("shaders/vert.shader");
@@ -80,35 +105,46 @@ void initBuffersGL(void)
 	shaderList.push_back(CS475::loadShaderGL(GL_FRAGMENT_SHADER, fragment_shader_file));
 	
 	shaderProgram = CS475::createProgramGL(shaderList);
-	glUseProgram( shaderProgram );
+	glUseProgram(shaderProgram);
 	
 	// set up vertex arrays
-	GLuint vPosition = glGetAttribLocation( shaderProgram, "vPosition" );
-	glEnableVertexAttribArray( vPosition );
+	vPosition = glGetAttribLocation(shaderProgram, "vPosition" );
+	glEnableVertexAttribArray(vPosition);
 	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 	
-//	GLuint vColor = glGetAttribLocation( shaderProgram, "vColor" );
-//	glEnableVertexAttribArray( vColor );
-//	glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(v_positions)));
+	// Get color attribure
+	vColor = glGetAttribLocation(shaderProgram, "vColor");
+	glEnableVertexAttribArray(vColor);
+//	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(buffer_size));
 	
-	uModelViewMatrix = glGetUniformLocation( shaderProgram, "uModelViewMatrix");
+	
+	uModelViewMatrix = glGetUniformLocation(shaderProgram, "uModelViewMatrix");
+	
+	GLuint eab;
+	glGenBuffers(1, &eab);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_size, &indices[0], GL_DYNAMIC_DRAW);
 }
 
 void renderGL(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	glBufferData (GL_ARRAY_BUFFER, num_vertices * 4 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, num_vertices * 4 * sizeof(float), &points[0]);
+	rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
+	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
+	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
+	translate_matrix =  glm::translate(glm::mat4(1.f),
+									   glm::vec3(-1.0 * WIDTH/2, -1.0 * HEIGHT/2, 0.0f));
+	ortho_matrix = glm::ortho(-1.0 * WIDTH / 2, 1.0 * WIDTH/2,
+							  -1.0 * HEIGHT/2, 1.0 * HEIGHT/2,
+							  -1.0 * DEPTH/2, 1.0 * DEPTH/2);
 	
-	translate_matrix =  glm::translate(glm::mat4(1.f), glm::vec3(-1.0 * WIDTH/2, -1.0 * HEIGHT/2, 0.f));
-	ortho_matrix = glm::ortho(-1.0 * WIDTH / 2, 1.0 * WIDTH/2, -1.0 * HEIGHT/2, 1.0 * HEIGHT/2, -1.0, 1.0);
-	
-	modelview_matrix = ortho_matrix * translate_matrix;
+	modelview_matrix = ortho_matrix * rotation_matrix;
 	
 	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 	
 	// Draw points 0-3 from the currently bound VAO with current in-use shader
-	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+	// glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 int main(int argc, char** argv) {
