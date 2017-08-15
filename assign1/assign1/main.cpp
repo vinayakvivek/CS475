@@ -21,7 +21,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-int WIDTH = 800, HEIGHT = 600, DEPTH = 600;
+float WIDTH = 800, HEIGHT = 600, DEPTH = 600;
 
 //int num_vertices = 7;
 //int buffer_size;
@@ -70,13 +70,65 @@ std::vector<GLuint> indices;
 std::vector<GLfloat> colors;
 
 GLuint shaderProgram;
-GLuint vbo, vao;
+GLuint vbo[3], vao[3];
+GLuint eab;
 GLint vColor, vPosition;
 
 // Rotation Parameters
 GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
 GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
 
+float drawing_plane[] = {
+	-WIDTH/2, HEIGHT/2, 0.0f, 1.0f,
+	WIDTH/2, -HEIGHT/2, 0.0f, 1.0f,
+	WIDTH/2, HEIGHT/2, 0.0f, 1.0f,
+	
+	-WIDTH/2, HEIGHT/2, 0.0f, 1.0f,
+	-WIDTH/2, -HEIGHT/2, 0.0f, 1.0f,
+	WIDTH/2, -HEIGHT/2, 0.0f, 1.0f,
+};
+
+float drawing_plane_colors[] = {
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+};
+
+float planes[] = {
+	-WIDTH/2, HEIGHT/2, 0.0f, 1.0f,
+	WIDTH/2, -HEIGHT/2, 0.0f, 1.0f,
+	WIDTH/2, HEIGHT/2, 0.0f, 1.0f,
+	
+	-WIDTH/2, HEIGHT/2, 0.0f, 1.0f,
+	-WIDTH/2, -HEIGHT/2, 0.0f, 1.0f,
+	WIDTH/2, -HEIGHT/2, 0.0f, 1.0f,
+	
+	-WIDTH/2, 0.0f, -DEPTH/2, 1.0f,
+	-WIDTH/2, 0.0f, DEPTH/2, 1.0f,
+	WIDTH/2, 0.0f, -DEPTH/2, 1.0f,
+	
+	-WIDTH/2, 0.0f, DEPTH/2, 1.0f,
+	WIDTH/2, 0.0f, DEPTH/2, 1.0f,
+	WIDTH/2, 0.0f, -DEPTH/2, 1.0f,
+};
+float planes_colors[] = {
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.5, 0.5, 0.5,
+};
 
 glm::mat4 translate_matrix;
 glm::mat4 rotation_matrix;
@@ -89,12 +141,12 @@ void initBuffersGL(void) {
 	buffer_size = points.size() * sizeof(GLfloat);
 	index_buffer_size = indices.size() * sizeof(GLuint);
 	
-	glGenVertexArrays (1, &vao);
-	glBindVertexArray (vao);
+	glGenVertexArrays(3, vao);
+	glBindVertexArray(vao[0]);
 	
-	glGenBuffers (1, &vbo);
-	glBindBuffer (GL_ARRAY_BUFFER, vbo);
-	glBufferData (GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
+	glGenBuffers(3, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
 	
 	// Load shaders and use the resulting shader program
 	std::string vertex_shader_file("shaders/vert.shader");
@@ -115,15 +167,38 @@ void initBuffersGL(void) {
 	// Get color attribure
 	vColor = glGetAttribLocation(shaderProgram, "vColor");
 	glEnableVertexAttribArray(vColor);
-//	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(buffer_size));
+	// glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(buffer_size));
 	
 	
 	uModelViewMatrix = glGetUniformLocation(shaderProgram, "uModelViewMatrix");
 	
-	GLuint eab;
+	
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
+	// drawing plane
+	glBindVertexArray(vao[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	
+	glBufferData(GL_ARRAY_BUFFER, sizeof (drawing_plane) + sizeof(drawing_plane_colors), NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(drawing_plane), drawing_plane);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(drawing_plane), sizeof(drawing_plane_colors), drawing_plane_colors);
+	
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	
+	glEnableVertexAttribArray( vColor );
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(drawing_plane)));
+	
+	// main points
+	glBindVertexArray(vao[0]);
+
 	glGenBuffers(1, &eab);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_size, &indices[0], GL_DYNAMIC_DRAW);
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void renderGL(void) {
@@ -138,13 +213,20 @@ void renderGL(void) {
 							  -1.0 * HEIGHT/2, 1.0 * HEIGHT/2,
 							  -1.0 * DEPTH/2, 1.0 * DEPTH/2);
 	
+	// draw points
 	modelview_matrix = ortho_matrix * rotation_matrix;
-	
 	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
-	
-	// Draw points 0-3 from the currently bound VAO with current in-use shader
-	// glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+	glBindVertexArray(vao[0]);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	
+	// draw plane
+	modelview_matrix = ortho_matrix;
+	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
+	glBindVertexArray(vao[1]);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+//	glBindVertexArray(vao[0]);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
 }
 
 int main(int argc, char** argv) {
@@ -169,7 +251,7 @@ int main(int argc, char** argv) {
 	// glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	
 	// ! Create a windowed mode window and its OpenGL context
-	window = glfwCreateWindow(WIDTH, HEIGHT, "CS475 assignment 1", NULL, NULL);
+	window = glfwCreateWindow((int)WIDTH, (int)HEIGHT, "CS475 assignment 1", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		return -1;
