@@ -42,6 +42,16 @@ GLuint vbo[num_vao], vao[num_vbo];
 GLint vPosition, vColor;
 GLint uModelViewMatrix;
 
+// rotation parameters
+GLfloat theta = 0.1;
+GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
+
+// position parameters
+GLfloat delta = 10.0;
+GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
+
+glm::mat4 translate_matrix;
+glm::mat4 rotation_matrix;
 glm::mat4 ortho_matrix;
 glm::mat4 modelview_matrix;
 	

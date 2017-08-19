@@ -7,6 +7,13 @@ extern std::vector<glm::vec4> colors;
 extern GLfloat half_width, half_height, half_depth;
 extern modelling::state_enum state;
 
+extern GLfloat theta;
+extern GLfloat xrot, yrot, zrot;
+extern GLfloat xpos, ypos, zpos;
+
+extern glm::mat4 translate_matrix;
+extern glm::mat4 rotation_matrix;
+
 namespace modelling {
 	
 	GLfloat curr_x, curr_y;
@@ -54,7 +61,32 @@ namespace modelling {
 				default:
 					break;
 			}
+		} else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+			if (state != s_start_polygon) {
+				yrot -= theta;
+			}
+		} else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+			if (state != s_start_polygon) {
+				yrot += theta;
+			}
+		} else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+			if (state != s_start_polygon) {
+				xrot -= theta;
+			}
+		} else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+			if (state != s_start_polygon) {
+				xrot += theta;
+			}
+		} else if (key == GLFW_KEY_PAGE_UP && action == GLFW_PRESS) {
+			if (state != s_start_polygon) {
+				zrot -= theta;
+			}
+		} else if (key == GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS) {
+			if (state != s_start_polygon) {
+				zrot += theta;
+			}
 		}
+
 	}
 	
 	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
@@ -73,7 +105,8 @@ namespace modelling {
 	
 	void add_temp_point(GLfloat x, GLfloat y) {
 		std::cout << x << " " << y << "\n";
-		temp_points.push_back(glm::vec4(x, y, 0.0f, 1.0f));
+		glm::vec4 p = glm::transpose(rotation_matrix) * glm::vec4(x, y, 0.0f, 1.0f);
+		temp_points.push_back(p);
 		temp_colors.push_back(get_random_color());
 	}
 	

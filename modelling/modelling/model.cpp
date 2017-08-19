@@ -56,10 +56,15 @@ void initBufferGL(void) {
 void renderGL(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
+	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
+	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
+	
 	ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-	modelview_matrix = ortho_matrix;
+	
+	modelview_matrix = ortho_matrix * rotation_matrix;
 	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 	
 	update_buffer_lengths();
