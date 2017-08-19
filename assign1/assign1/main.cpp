@@ -89,12 +89,12 @@ float drawing_plane[] = {
 };
 
 float drawing_plane_colors[] = {
-	0.5, 0.5, 0.5, 0.5,
-	0.5, 0.5, 0.5, 0.5,
-	0.5, 0.5, 0.5, 0.5,
-	0.5, 0.5, 0.5, 0.5,
-	0.5, 0.5, 0.5, 0.5,
-	0.5, 0.5, 0.5, 0.5,
+	0.5, 0.2, 0.3, 0.5,
+	0.5, 0.2, 0.3, 0.5,
+	0.5, 0.2, 0.3, 0.5,
+	0.5, 0.2, 0.3, 0.5,
+	0.5, 0.2, 0.3, 0.5,
+	0.5, 0.2, 0.3, 0.5,
 };
 
 float planes[] = {
@@ -114,7 +114,7 @@ float planes[] = {
 	WIDTH/2, 0.0f, DEPTH/2, 1.0f,
 	WIDTH/2, 0.0f, -DEPTH/2, 1.0f,
 };
-float planes_colors[] = {
+float plane_colors[] = {
 	0.5, 0.5, 0.5, 0.5,
 	0.5, 0.5, 0.5, 0.5,
 	0.5, 0.5, 0.5, 0.5,
@@ -136,18 +136,7 @@ glm::mat4 ortho_matrix;
 glm::mat4 modelview_matrix;
 GLuint uModelViewMatrix;
 
-void initBuffersGL(void) {
-	
-	buffer_size = points.size() * sizeof(GLfloat);
-	index_buffer_size = indices.size() * sizeof(GLuint);
-	
-	glGenVertexArrays(3, vao);
-	glBindVertexArray(vao[0]);
-	
-	glGenBuffers(3, vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
-	
+void loadShaderProgram() {
 	// Load shaders and use the resulting shader program
 	std::string vertex_shader_file("shaders/vert.shader");
 	std::string fragment_shader_file("shaders/frag.shader");
@@ -158,6 +147,22 @@ void initBuffersGL(void) {
 	
 	shaderProgram = CS475::createProgramGL(shaderList);
 	glUseProgram(shaderProgram);
+}
+
+void initBuffersGL(void) {
+	
+	buffer_size = points.size() * sizeof(GLfloat);
+	index_buffer_size = indices.size() * sizeof(GLuint);
+	
+	loadShaderProgram();
+	
+	glGenVertexArrays(3, vao);
+	glGenBuffers(3, vbo);
+	
+	
+	glBindVertexArray(vao[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
 	
 	// set up vertex arrays
 	vPosition = glGetAttribLocation(shaderProgram, "vPosition" );
@@ -168,7 +173,6 @@ void initBuffersGL(void) {
 	vColor = glGetAttribLocation(shaderProgram, "vColor");
 	glEnableVertexAttribArray(vColor);
 	// glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(buffer_size));
-	
 	
 	uModelViewMatrix = glGetUniformLocation(shaderProgram, "uModelViewMatrix");
 	
@@ -189,6 +193,20 @@ void initBuffersGL(void) {
 	glEnableVertexAttribArray( vColor );
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(drawing_plane)));
 	
+	// planes
+	glBindVertexArray(vao[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	
+	glBufferData(GL_ARRAY_BUFFER, sizeof (planes) + sizeof(plane_colors), NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(planes), planes);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(planes), sizeof(plane_colors), plane_colors);
+	
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	
+	glEnableVertexAttribArray( vColor );
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(planes)));
+	
 	// main points
 	glBindVertexArray(vao[0]);
 
@@ -207,26 +225,28 @@ void renderGL(void) {
 	rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
-	translate_matrix =  glm::translate(glm::mat4(1.f),
-									   glm::vec3(-1.0 * WIDTH/2, -1.0 * HEIGHT/2, 0.0f));
+	translate_matrix =  glm::translate(glm::mat4(1.f), glm::vec3(xpos, ypos, zpos));
 	ortho_matrix = glm::ortho(-1.0 * WIDTH / 2, 1.0 * WIDTH/2,
 							  -1.0 * HEIGHT/2, 1.0 * HEIGHT/2,
 							  -1.0 * DEPTH/2, 1.0 * DEPTH/2);
 	
 	// draw points
-	modelview_matrix = ortho_matrix * rotation_matrix;
+	modelview_matrix = ortho_matrix * translate_matrix * rotation_matrix;
 	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 	glBindVertexArray(vao[0]);
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLE_STRIP, indices.size(), GL_UNSIGNED_INT, 0);
 	
-	// draw plane
+	// draw drawing plane
 	modelview_matrix = ortho_matrix;
 	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 	glBindVertexArray(vao[1]);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-//	glBindVertexArray(vao[0]);
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
+	
+	// draw planes
+//	modelview_matrix = ortho_matrix * rotation_matrix;
+//	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
+//	glBindVertexArray(vao[2]);
+//	glDrawArrays(GL_TRIANGLES, 0, 12);
 }
 
 int main(int argc, char** argv) {

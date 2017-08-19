@@ -17,6 +17,7 @@ extern GLfloat xrot, yrot, zrot;
 extern GLfloat xpos, ypos, zpos;
 
 extern glm::mat4 rotation_matrix;
+extern glm::mat4 translate_matrix;
 
 namespace CS475 {
 	
@@ -69,18 +70,32 @@ namespace CS475 {
 		} else if (key == GLFW_KEY_E  && action == GLFW_PRESS) {
 			zrot += 0.1;
 		}
+		
+		else if (key == GLFW_KEY_RIGHT  && action == GLFW_PRESS) {
+			xpos += 10;
+		} else if (key == GLFW_KEY_LEFT  && action == GLFW_PRESS) {
+			xpos -= 10;
+		} else if (key == GLFW_KEY_UP  && action == GLFW_PRESS) {
+			ypos += 10;
+		} else if (key == GLFW_KEY_DOWN  && action == GLFW_PRESS) {
+			ypos -= 10;
+		} else if (key == GLFW_KEY_PAGE_UP  && action == GLFW_PRESS) {
+			zpos += 10;
+		} else if (key == GLFW_KEY_PAGE_DOWN  && action == GLFW_PRESS) {
+			zpos -= 10;
+		}
 	}
 
 	
 	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
-		// std::cout << xpos << " " << ypos << std::endl;
+		std::cout << xpos << " " << ypos << std::endl;
 		curr_x = xpos;
 		curr_y = ypos;
 	}
 	
 	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-			std::cout << curr_x << " " << curr_y << "\n";
+			std::cout << curr_x - WIDTH/2 << " " << HEIGHT/2 - curr_y << "\n";
 			add_new_point(curr_x - WIDTH/2, HEIGHT/2 - curr_y);
 		} else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 			remove_last_point();
@@ -90,7 +105,7 @@ namespace CS475 {
 	void add_new_point(float x, float y) {
 
 		glm::vec4 new_point(x, y, 0.0, 1.0);
-		new_point = glm::transpose(rotation_matrix) * new_point;
+		new_point = glm::transpose(rotation_matrix) * glm::inverse(translate_matrix) * new_point;
 		
 		points.push_back(new_point.x);
 		points.push_back(new_point.y);
