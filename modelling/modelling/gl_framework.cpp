@@ -14,6 +14,8 @@ extern GLfloat xpos, ypos, zpos;
 extern glm::mat4 translate_matrix;
 extern glm::mat4 rotation_matrix;
 
+extern GLboolean show_planes;
+
 namespace modelling {
 	
 	GLfloat curr_x, curr_y;
@@ -61,6 +63,9 @@ namespace modelling {
 				default:
 					break;
 			}
+		} else if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+			// toggle planes
+			show_planes = !show_planes;
 		} else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
 			if (state != s_start_polygon) {
 				yrot -= theta;

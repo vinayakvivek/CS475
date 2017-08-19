@@ -37,10 +37,6 @@ void initBufferGL(void) {
 	glEnableVertexAttribArray(vPosition);
 	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 	
-	glEnableVertexAttribArray(vColor);
-	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points_buffer_length));
-
-	
 	// temp model polygon
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 	glBindVertexArray(vao[1]);
@@ -49,7 +45,27 @@ void initBufferGL(void) {
 	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 	
+	// xy, yz, zx planes
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	glBindVertexArray(vao[2]);
+	
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(plane_points)));
+	
+	glBufferData(GL_ARRAY_BUFFER, sizeof(plane_points) + sizeof(plane_colors), NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(plane_points), plane_points);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(plane_points), sizeof(plane_colors), plane_colors);
+	
+	glGenBuffers(1, &eab);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_indices), &plane_indices[0], GL_DYNAMIC_DRAW);
+	
 	glEnable(GL_PROGRAM_POINT_SIZE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
@@ -90,6 +106,11 @@ void renderGL(void) {
 	glEnableVertexAttribArray(vColor);
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(temp_points_buffer_length));
 	glDrawArrays(GL_POINTS, 0, temp_points.size());
+	
+	if (show_planes) {
+		glBindVertexArray(vao[2]);
+		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+	}
 }
 
 int main(int argc, char** argv) {

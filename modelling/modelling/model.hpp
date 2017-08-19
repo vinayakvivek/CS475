@@ -36,9 +36,9 @@ std::vector<glm::vec4> temp_colors;
 
 modelling::state_enum state = modelling::s_model;
 
-const GLuint num_vao = 2, num_vbo = 2;
+const GLuint num_vao = 3, num_vbo = 3;
 GLuint shaderProgram;
-GLuint vbo[num_vao], vao[num_vbo];
+GLuint vbo[num_vao], vao[num_vbo], eab;
 GLint vPosition, vColor;
 GLint uModelViewMatrix;
 
@@ -54,6 +54,48 @@ glm::mat4 translate_matrix;
 glm::mat4 rotation_matrix;
 glm::mat4 ortho_matrix;
 glm::mat4 modelview_matrix;
+
+
+GLboolean show_planes = false;
+
+// xy, yz, zx planes
+glm::vec4 plane_points[] = {
+	// XY
+	glm::vec4(-half_width, half_height, 0.0, 1.0),
+	glm::vec4(-half_width, -half_height, 0.0, 1.0),
+	glm::vec4(half_width, -half_height, 0.0, 1.0),
+	glm::vec4(half_width, half_height, 0.0, 1.0),
 	
+	// YZ
+	glm::vec4(0.0, half_height, half_depth, 1.0),
+	glm::vec4(0.0, -half_height, half_depth, 1.0),
+	glm::vec4(0.0, -half_height, -half_depth, 1.0),
+	glm::vec4(0.0, half_height, -half_depth, 1.0),
+	
+	// ZX
+	glm::vec4(-half_width, 0.0, -half_depth, 1.0),
+	glm::vec4(-half_width, 0.0, half_depth, 1.0),
+	glm::vec4(half_width, 0.0, half_depth, 1.0),
+	glm::vec4(half_width, 0.0, -half_depth, 1.0),
+};
+
+glm::vec4 xy_color = glm::vec4(0.5, 0.5, 0.5, 0.5);
+glm::vec4 yz_color = glm::vec4(0.3, 0.5, 0.8, 0.5);
+glm::vec4 zx_color = glm::vec4(0.8, 0.5, 0.3, 0.5);
+glm::vec4 plane_colors[] = {
+	xy_color, xy_color, xy_color, xy_color,
+	yz_color, yz_color, yz_color, yz_color,
+	zx_color, zx_color, zx_color, zx_color,
+};
+GLuint plane_indices[] = {
+	0, 1, 3,
+	3, 1, 2,
+	
+	4, 5, 6,
+	4, 6, 7,
+	
+	8, 9, 10,
+	8, 10, 11,
+};
 
 #endif /* model_h */
