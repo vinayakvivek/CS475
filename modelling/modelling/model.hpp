@@ -19,8 +19,8 @@ GLuint colors_buffer_length = 0;
 
 std::vector<glm::vec4> points({
 	glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
-	glm::vec4(-100.0f,  -100.0f,  100.0f, 1.0f),
-	glm::vec4(-100.0f, 100.0f,  100.0f, 1.0f),
+	glm::vec4(-100.0f,  -100.0f,  0.0f, 1.0f),
+	glm::vec4(-100.0f, 100.0f,  0.0f, 1.0f),
 });
 std::vector<glm::vec4> colors({
 	glm::vec4(0.5f, 0.0f, 0.5f, 1.0f),
@@ -36,9 +36,9 @@ std::vector<glm::vec4> temp_colors;
 
 modelling::state_enum state = modelling::s_model;
 
-const GLuint num_vao = 3, num_vbo = 3;
+const GLuint num_vao = 4, num_vbo = 4, num_eab = 2;
 GLuint shaderProgram;
-GLuint vbo[num_vao], vao[num_vbo], eab;
+GLuint vbo[num_vao], vao[num_vbo], eab[num_eab];
 GLint vPosition, vColor;
 GLint uModelViewMatrix;
 
@@ -51,12 +51,17 @@ GLfloat delta = 10.0;
 GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
 
 glm::mat4 translate_matrix;
+glm::mat4 translate_centroid_matrix;
+glm::mat4 plane_rotation_matrix;
 glm::mat4 rotation_matrix;
+glm::mat4 model_matrix;
 glm::mat4 ortho_matrix;
 glm::mat4 modelview_matrix;
 
+glm::vec4 centroid = glm::vec4(0.0, 0.0, 0.0, 1.0);
 
-GLboolean show_planes = false;
+GLboolean show_planes = true;
+GLboolean show_frontal_plane = true;
 
 // xy, yz, zx planes
 glm::vec4 plane_points[] = {
@@ -78,10 +83,9 @@ glm::vec4 plane_points[] = {
 	glm::vec4(half_width, 0.0, half_depth, 1.0),
 	glm::vec4(half_width, 0.0, -half_depth, 1.0),
 };
-
-glm::vec4 xy_color = glm::vec4(0.5, 0.5, 0.5, 0.5);
-glm::vec4 yz_color = glm::vec4(0.3, 0.5, 0.8, 0.5);
-glm::vec4 zx_color = glm::vec4(0.8, 0.5, 0.3, 0.5);
+glm::vec4 xy_color = glm::vec4(0.8, 0.8, 0.8, 0.5);
+glm::vec4 yz_color = glm::vec4(0.8, 0.5, 0.7, 0.5);
+glm::vec4 zx_color = glm::vec4(0.6, 0.5, 0.9, 0.5);
 glm::vec4 plane_colors[] = {
 	xy_color, xy_color, xy_color, xy_color,
 	yz_color, yz_color, yz_color, yz_color,
@@ -96,6 +100,23 @@ GLuint plane_indices[] = {
 	
 	8, 9, 10,
 	8, 10, 11,
+};
+
+
+// current frontal plane
+glm::vec4 frontal_plane_points[] = {
+	glm::vec4(-half_width, half_height, 0.0, 1.0),
+	glm::vec4(-half_width, -half_height, 0.0, 1.0),
+	glm::vec4(half_width, -half_height, 0.0, 1.0),
+	glm::vec4(half_width, half_height, 0.0, 1.0),
+};
+glm::vec4 f_plane_color = glm::vec4(1.0, 1.0, 1.0, 0.5);
+glm::vec4 frontal_plane_colors[] = {
+	f_plane_color, f_plane_color, f_plane_color, f_plane_color,
+};
+GLuint frontal_plane_indices[] = {
+	0, 1, 3,
+	3, 1, 2,
 };
 
 #endif /* model_h */

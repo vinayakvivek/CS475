@@ -2,7 +2,9 @@
 #define gl_framework_hpp
 
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <algorithm>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "glm/vec3.hpp"
@@ -43,6 +45,11 @@ namespace modelling {
 	void remove_last_vertex();
 	
 	glm::vec4 get_random_color();
+	
+	void calc_centroid();
+	
+	void save_model();
+	void load_model();
 };
 
 #endif /* gl_framework_hpp */

@@ -28,6 +28,7 @@ void initBufferGL(void) {
 	
 	glGenBuffers(num_vbo, vbo);
 	glGenVertexArrays(num_vao, vao);
+	glGenBuffers(num_eab, eab);
 	
 	
 	// main model
@@ -58,15 +59,35 @@ void initBufferGL(void) {
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(plane_points), plane_points);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(plane_points), sizeof(plane_colors), plane_colors);
 	
-	glGenBuffers(1, &eab);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_indices), &plane_indices[0], GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab[0]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_indices), plane_indices, GL_DYNAMIC_DRAW);
+	
+	
+	// frontal plane
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+	glBindVertexArray(vao[3]);
+	
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(frontal_plane_points)));
+	
+	glBufferData(GL_ARRAY_BUFFER, sizeof(frontal_plane_points) + sizeof(frontal_plane_colors), NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(frontal_plane_points), frontal_plane_points);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(frontal_plane_points), sizeof(frontal_plane_colors), frontal_plane_colors);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(frontal_plane_indices), frontal_plane_indices, GL_DYNAMIC_DRAW);
 	
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
+	plane_rotation_matrix = glm::rotate(glm::mat4(1.0f), 0.5f, glm::vec3(1.0f,0.0f,0.0f));
+	plane_rotation_matrix = glm::rotate(plane_rotation_matrix, 0.5f, glm::vec3(0.0f,1.0f,0.0f));
+	plane_rotation_matrix = glm::rotate(plane_rotation_matrix, 0.0f, glm::vec3(0.0f,0.0f,1.0f));
 }
 
 void renderGL(void) {
@@ -76,12 +97,20 @@ void renderGL(void) {
 	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
 	
+	translate_matrix =  glm::translate(glm::mat4(1.f), glm::vec3(xpos, ypos, zpos));
+	translate_centroid_matrix = glm::translate(glm::mat4(1.f), glm::vec3(-centroid));
+	
 	ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
 	
-	modelview_matrix = ortho_matrix * rotation_matrix;
-	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
+	if (state == modelling::s_inspect)
+		model_matrix = plane_rotation_matrix * translate_matrix * rotation_matrix * translate_centroid_matrix;
+	else
+		model_matrix = plane_rotation_matrix * rotation_matrix * translate_matrix * translate_centroid_matrix;
+	
+	modelview_matrix = ortho_matrix * model_matrix;
+ 	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 	
 	update_buffer_lengths();
 	
@@ -107,9 +136,19 @@ void renderGL(void) {
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(temp_points_buffer_length));
 	glDrawArrays(GL_POINTS, 0, temp_points.size());
 	
+	// planes
 	if (show_planes) {
 		glBindVertexArray(vao[2]);
+		modelview_matrix = ortho_matrix * plane_rotation_matrix;
+		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+	}
+	
+	// frontal plane
+	if (show_frontal_plane) {
+		glBindVertexArray(vao[3]);
+		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 }
 

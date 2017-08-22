@@ -7,18 +7,22 @@ extern std::vector<glm::vec4> colors;
 extern GLfloat half_width, half_height, half_depth;
 extern modelling::state_enum state;
 
-extern GLfloat theta;
+extern GLfloat theta, delta;
 extern GLfloat xrot, yrot, zrot;
 extern GLfloat xpos, ypos, zpos;
 
 extern glm::mat4 translate_matrix;
 extern glm::mat4 rotation_matrix;
+extern glm::mat4 model_matrix;
 
+extern glm::vec4 centroid;
 extern GLboolean show_planes;
+extern GLboolean show_frontal_plane;
 
 namespace modelling {
 	
 	GLfloat curr_x, curr_y;
+	glm::vec4 diff;
 	
 	// ! Initialize GL State
 	void initGL(void)
@@ -33,6 +37,8 @@ namespace modelling {
 		glEnable(GL_DEPTH_TEST);
 		// Enable Gourard shading
 		glShadeModel(GL_SMOOTH);
+		
+		diff = glm::vec4(0.0, 0.0, 0.0, 1.0);
 	}
 	
 	// !GLFW Error Callback
@@ -51,6 +57,22 @@ namespace modelling {
 		// !Close the window if the ESC key was pressed
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
+		} else if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+			state = s_model;
+			xpos = ypos = zpos = 0.0;
+		} else if (key == GLFW_KEY_I && action == GLFW_PRESS) {
+			state = s_inspect;
+			calc_centroid();
+			xpos = ypos = zpos = 0.0;
+		} else if (key == GLFW_KEY_K && action == GLFW_PRESS) {
+			state_enum prev_state = state;
+			state = s_save;
+			save_model();
+			state = prev_state;
+		} else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+			state = s_load;
+			load_model();
+			state = s_inspect;
 		} else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
 			switch (state) {
 				case s_model:
@@ -63,9 +85,16 @@ namespace modelling {
 				default:
 					break;
 			}
-		} else if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+		} else if (key == GLFW_KEY_V && action == GLFW_PRESS) {
 			// toggle planes
 			show_planes = !show_planes;
+		} else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+			show_frontal_plane = !show_frontal_plane;
+		} else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+			// move centroid to origin
+			if (state == s_model)
+				calc_centroid();
+			xpos = ypos = zpos = 0.0;
 		} else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
 			if (state != s_start_polygon) {
 				yrot -= theta;
@@ -90,6 +119,18 @@ namespace modelling {
 			if (state != s_start_polygon) {
 				zrot += theta;
 			}
+		} else if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+			ypos += delta;
+		} else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+			ypos -= delta;
+		} else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+			xpos += delta;
+		} else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+			xpos -= delta;
+		} else if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+			zpos += delta;
+		} else if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+			zpos -= delta;
 		}
 
 	}
@@ -109,8 +150,8 @@ namespace modelling {
 	}
 	
 	void add_temp_point(GLfloat x, GLfloat y) {
-		std::cout << x << " " << y << "\n";
-		glm::vec4 p = glm::transpose(rotation_matrix) * glm::vec4(x, y, 0.0f, 1.0f);
+		// std::cout << x << " " << y << "\n";
+		glm::vec4 p = glm::inverse(model_matrix) * glm::vec4(x, y, 0.0f, 1.0f);
 		temp_points.push_back(p);
 		temp_colors.push_back(get_random_color());
 	}
@@ -148,6 +189,8 @@ namespace modelling {
 		
 		temp_points.clear();
 		temp_colors.clear();
+		
+		// calc_centroid();
 	}
 	
 	void remove_last_vertex() {
@@ -164,6 +207,8 @@ namespace modelling {
 			colors.pop_back();
 			colors.pop_back();
 		}
+		
+		// calc_centroid();
 	}
 	
 	glm::vec4 get_random_color() {
@@ -174,6 +219,85 @@ namespace modelling {
 						 8.5*(1-t)*(1-t)*(1-t)*t,
 						 1.0
 						 );
+	}
+	
+	bool comp_unique(const glm::vec4 &a, const glm::vec4 &b) {
+		float eps = 0.00001;
+		return (abs(a.x - b.x) < eps &&
+				abs(a.y - b.y) < eps &&
+				abs(a.z - b.z) < eps &&
+				abs(a.w - b.w) < eps);
+	}
+	
+	bool comp_sort(const glm::vec4 &a, const glm::vec4 &b) {
+		if (a.x < b.x)
+			return true;
+		else if (a.y < b.y)
+			return true;
+		else if (a.z < b.z)
+			return true;
+		else
+			return false;
+	}
+	
+	void calc_centroid() {
+		glm::vec4 p = glm::vec4(0.0, 0.0, 0.0, 1.0);
+		std::vector<glm::vec4> t_points = points;
+		
+		std::sort(t_points.begin(), t_points.end(), comp_sort);
+		auto last = std::unique(t_points.begin(), t_points.end(), comp_unique);
+		t_points.erase(last, t_points.end());
+		
+		std::cout << "no. of points: " << t_points.size() << std::endl;
+		
+		for (glm::vec4 point : t_points) {
+			p += point;
+		}
+		p /= points.size();
+		
+//		diff = (p - centroid);
+//		xpos += diff.x;
+//		ypos += diff.y;
+//		zpos += diff.z;
+		
+		centroid = p;
+		
+		std::cout << p.x << " " << p.y << " " << p.z << "\n";
+	}
+	
+	void save_model() {
+		std::string file_name;
+		std::cin >> file_name;
+		
+		std::ofstream model_file;
+		model_file.open(file_name, std::ios::out);
+		
+		int n = points.size();
+		for (int i = 0; i < n; ++i) {
+			model_file << points[i].x << " " << points[i].y << " " << points[i].z << " ";
+			model_file << colors[i].x << " " << colors[i].y << " " << colors[i].z << "\n";
+		}
+		
+		model_file.close();
+	}
+	
+	void load_model() {
+		std::string file_name;
+		std::cin >> file_name;
+		
+		std::ifstream model_file;
+		model_file.open(file_name, std::ios::in);
+		
+		points.clear();
+		colors.clear();
+		
+		GLfloat x, y, z, r, g, b;
+		while (model_file >> x >> y >> z >> r >> g >> b) {
+			points.push_back(glm::vec4(x, y, z, 1.0));
+			colors.push_back(glm::vec4(r, g, b, 1.0));
+		}
+		
+		model_file.close();
 	}
 };
 
