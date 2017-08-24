@@ -77,6 +77,7 @@ namespace modelling {
 			switch (state) {
 				case s_model:
 					state = s_start_polygon;
+					update_temp_point(curr_x - half_width, half_height - curr_y);
 					break;
 				case s_start_polygon:
 					state = s_model;
@@ -175,20 +176,31 @@ namespace modelling {
 	}
 	
 	void update_temp_point(GLfloat x, GLfloat y) {
-		if (temp_points.size() < 1)
-			return;
-		
 		glm::vec4 p = glm::inverse(model_matrix) * glm::vec4(x, y, 0.0f, 1.0f);
-		temp_points[temp_points.size() - 1] = p;
+		
+		if (temp_points.size() == 0) {
+			temp_points.push_back(p);
+			temp_colors.push_back(get_random_color());
+		} else
+			temp_points[temp_points.size() - 1] = p;
 	}
 	
 	void add_polygon() {
+		
 		int n = temp_points.size();
 		
-		if (n < 3)
+		if (n == 0)
 			return;
 		
 		temp_points.pop_back();
+		temp_colors.pop_back();
+		n--;
+		
+		if (n < 3) {
+			temp_points.clear();
+			temp_colors.clear();
+			return;
+		}
 		
 		glm::vec4 centre;
 		for (glm::vec4 point : temp_points) {

@@ -12,7 +12,7 @@
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 
 
-GLfloat half_width = 400, half_height = 300, half_depth = 300;
+GLfloat half_width = 400, half_height = 300, half_depth = 500;
 
 GLuint points_buffer_length = 0;
 GLuint colors_buffer_length = 0;
@@ -47,7 +47,7 @@ GLfloat theta = 0.05;
 GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
 
 // position parameters
-GLfloat delta = 10.0;
+GLfloat delta = 2.0;
 GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
 
 glm::mat4 translate_matrix;
