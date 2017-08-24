@@ -42,10 +42,13 @@ GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
 GLfloat delta = 2.0;
 GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
 
+GLfloat scale = 1.0;
+
 glm::mat4 translate_matrix;
 glm::mat4 translate_centroid_matrix;
 glm::mat4 plane_rotation_matrix;
 glm::mat4 rotation_matrix;
+glm::mat4 scale_matrix;
 glm::mat4 model_matrix;
 glm::mat4 ortho_matrix;
 glm::mat4 modelview_matrix;

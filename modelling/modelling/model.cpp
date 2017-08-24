@@ -98,6 +98,8 @@ void renderGL(void) {
 	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
 	
+	scale_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale));
+	
 	translate_matrix =  glm::translate(glm::mat4(1.f), glm::vec3(xpos, ypos, zpos));
 	translate_centroid_matrix = glm::translate(glm::mat4(1.f), glm::vec3(-centroid));
 	
@@ -106,9 +108,9 @@ void renderGL(void) {
 							  -half_depth, half_depth);
 	
 	if (state == modelling::s_inspect)
-		model_matrix = translate_matrix * rotation_matrix * translate_centroid_matrix;
+		model_matrix = scale_matrix * translate_matrix * rotation_matrix * translate_centroid_matrix;
 	else
-		model_matrix = rotation_matrix * translate_matrix * translate_centroid_matrix;
+		model_matrix = scale_matrix * rotation_matrix * translate_matrix * translate_centroid_matrix;
 	
 	modelview_matrix = ortho_matrix * model_matrix;
  	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));

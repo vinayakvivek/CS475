@@ -10,6 +10,7 @@ extern modelling::state_enum state;
 extern GLfloat theta, delta;
 extern GLfloat xrot, yrot, zrot;
 extern GLfloat xpos, ypos, zpos;
+extern GLfloat scale;
 
 extern glm::mat4 translate_matrix;
 extern glm::mat4 rotation_matrix;
@@ -79,6 +80,7 @@ namespace modelling {
 		} else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
 			state = s_load;
 			load_model();
+			calc_centroid();
 			state = s_inspect;
 			std::cout << "current mode: inspection\n";
 		} else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
@@ -155,6 +157,10 @@ namespace modelling {
 				xrot = 0; zrot = 0;
 				yrot = 3.1456 / 2;
 			//}
+		} else if (key == GLFW_KEY_B && action == GLFW_PRESS) {
+			scale += 0.5;
+		} else if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+			scale -= 0.5;
 		}
 		
 		left_shift_state = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
