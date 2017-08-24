@@ -1,12 +1,23 @@
 -> M: modelling mode, 
 		in modelling mode, press P to start drawing polygon (click to plot a vertex)
-		after creating all the vertices, click P again to create the full polygon.
+		after creating all the vertices, click P again to create the full polygon and add it 
+		to the current loaded model.
 
 	* in modelling mode, rotations will be about the centre, not about the centroid 
+	* to rotate about centroid, first press 'R', which moves centroid to origin, then rotate.
 
+-> P: to start and stop drawing polygons in modelling mode.
+		* if no. of points plotted is < 3, then no polygon will be formed.
+		
 -> I: inspection mode
 	* as given in problem statement
 
--> V: to show axes planes (XY, YZ, ZX planes)
+-> V: to toggle axes planes (XY, YZ, ZX planes) (only in modelling mode)
+-> C: to toggle frontal plane
+
+-> T: to draw on XZ plane 
+-> Y: to draw on XY plane
+-> U: to draw on YZ plane  
+
 -> K: save model
 -> L: load model
