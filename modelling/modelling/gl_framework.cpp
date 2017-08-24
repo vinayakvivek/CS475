@@ -19,6 +19,8 @@ extern glm::vec4 centroid;
 extern GLboolean show_planes;
 extern GLboolean show_frontal_plane;
 
+extern glm::vec4 *plane_points;
+
 namespace modelling {
 	
 	GLfloat curr_x, curr_y;
@@ -50,6 +52,9 @@ namespace modelling {
 	void framebuffer_size_callback(GLFWwindow* window, int w, int h) {
 		// !Resize the viewport to fit the window size - draw to entire window
 		glViewport(0, 0, w, h);
+		
+		half_width = w / 4;
+		half_height = h / 4;
 	}
 	
 	// !GLFW keyboard callback
@@ -173,6 +178,9 @@ namespace modelling {
 					remove_last_vertex();
 				else
 					add_temp_point(curr_x - half_width, half_height - curr_y);
+			} else {
+				if (left_shift_state == GLFW_PRESS || right_shift_state == GLFW_PRESS)
+					remove_last_vertex();
 			}
 		}
 	}
