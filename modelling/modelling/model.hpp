@@ -43,7 +43,7 @@ GLint vPosition, vColor;
 GLint uModelViewMatrix;
 
 // rotation parameters
-GLfloat theta = 0.1;
+GLfloat theta = 0.05;
 GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
 
 // position parameters

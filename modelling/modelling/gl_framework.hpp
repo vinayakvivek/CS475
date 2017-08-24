@@ -39,6 +39,7 @@ namespace modelling {
 	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 	
 	void add_temp_point(GLfloat x, GLfloat y);
+	void update_temp_point(GLfloat x, GLfloat y);
 	
 	void add_polygon();
 	

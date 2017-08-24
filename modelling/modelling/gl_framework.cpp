@@ -96,29 +96,29 @@ namespace modelling {
 				calc_centroid();
 			xpos = ypos = zpos = 0.0;
 		} else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-			if (state != s_start_polygon) {
+			//if (state != s_start_polygon) {
 				yrot -= theta;
-			}
+			//}
 		} else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-			if (state != s_start_polygon) {
+			//if (state != s_start_polygon) {
 				yrot += theta;
-			}
+			//}
 		} else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-			if (state != s_start_polygon) {
+			//if (state != s_start_polygon) {
 				xrot -= theta;
-			}
+			//}
 		} else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-			if (state != s_start_polygon) {
+			//if (state != s_start_polygon) {
 				xrot += theta;
-			}
+			//}
 		} else if (key == GLFW_KEY_PAGE_UP && action == GLFW_PRESS) {
-			if (state != s_start_polygon) {
+			//if (state != s_start_polygon) {
 				zrot -= theta;
-			}
+			//}
 		} else if (key == GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS) {
-			if (state != s_start_polygon) {
+			//if (state != s_start_polygon) {
 				zrot += theta;
-			}
+			//}
 		} else if (key == GLFW_KEY_W && action == GLFW_PRESS) {
 			ypos += delta;
 		} else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
@@ -131,6 +131,21 @@ namespace modelling {
 			zpos += delta;
 		} else if (key == GLFW_KEY_X && action == GLFW_PRESS) {
 			zpos -= delta;
+		} else if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+			//if (state != s_start_polygon) {
+				zrot = 0; yrot = 0;
+				xrot = 3.1456 / 2;
+			//}
+		} else if (key == GLFW_KEY_Y && action == GLFW_PRESS) {
+			//if (state != s_start_polygon) {
+				xrot = 0; zrot = 0;
+				yrot = 0;
+			//}
+		} else if (key == GLFW_KEY_U && action == GLFW_PRESS) {
+			//if (state != s_start_polygon) {
+				xrot = 0; zrot = 0;
+				yrot = 3.1456 / 2;
+			//}
 		}
 
 	}
@@ -138,6 +153,9 @@ namespace modelling {
 	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
 		curr_x = xpos;
 		curr_y = ypos;
+		if (state == s_start_polygon) {
+			update_temp_point(curr_x - half_width, half_height - curr_y);
+		}
 	}
 	
 	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
@@ -156,11 +174,21 @@ namespace modelling {
 		temp_colors.push_back(get_random_color());
 	}
 	
+	void update_temp_point(GLfloat x, GLfloat y) {
+		if (temp_points.size() < 1)
+			return;
+		
+		glm::vec4 p = glm::inverse(model_matrix) * glm::vec4(x, y, 0.0f, 1.0f);
+		temp_points[temp_points.size() - 1] = p;
+	}
+	
 	void add_polygon() {
 		int n = temp_points.size();
 		
 		if (n < 3)
 			return;
+		
+		temp_points.pop_back();
 		
 		glm::vec4 centre;
 		for (glm::vec4 point : temp_points) {
@@ -244,9 +272,9 @@ namespace modelling {
 		glm::vec4 p = glm::vec4(0.0, 0.0, 0.0, 1.0);
 		std::vector<glm::vec4> t_points = points;
 		
-		std::sort(t_points.begin(), t_points.end(), comp_sort);
-		auto last = std::unique(t_points.begin(), t_points.end(), comp_unique);
-		t_points.erase(last, t_points.end());
+//		std::sort(t_points.begin(), t_points.end(), comp_sort);
+//		auto last = std::unique(t_points.begin(), t_points.end(), comp_unique);
+//		t_points.erase(last, t_points.end());
 		
 		std::cout << "no. of points: " << t_points.size() << std::endl;
 		
@@ -254,12 +282,7 @@ namespace modelling {
 			p += point;
 		}
 		p /= points.size();
-		
-//		diff = (p - centroid);
-//		xpos += diff.x;
-//		ypos += diff.y;
-//		zpos += diff.z;
-		
+				
 		centroid = p;
 		
 		std::cout << p.x << " " << p.y << " " << p.z << "\n";
