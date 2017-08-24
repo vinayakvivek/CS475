@@ -17,16 +17,8 @@ GLfloat half_width = 400, half_height = 300, half_depth = 500;
 GLuint points_buffer_length = 0;
 GLuint colors_buffer_length = 0;
 
-std::vector<glm::vec4> points({
-	glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
-	glm::vec4(-100.0f,  -100.0f,  0.0f, 1.0f),
-	glm::vec4(-100.0f, 100.0f,  0.0f, 1.0f),
-});
-std::vector<glm::vec4> colors({
-	glm::vec4(0.5f, 0.0f, 0.5f, 1.0f),
-	glm::vec4(0.3f,  0.5f,  0.8f, 1.0f),
-	glm::vec4(0.4f, 0.7f,  0.2f, 1.0f),
-});
+std::vector<glm::vec4> points;
+std::vector<glm::vec4> colors;
 
 
 GLuint temp_points_buffer_length = 0;
