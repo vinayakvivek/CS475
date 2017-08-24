@@ -61,7 +61,7 @@ glm::mat4 modelview_matrix;
 glm::vec4 centroid = glm::vec4(0.0, 0.0, 0.0, 1.0);
 
 GLboolean show_planes = true;
-GLboolean show_frontal_plane = true;
+GLboolean show_frontal_plane = false;
 
 // xy, yz, zx planes
 glm::vec4 plane_points[] = {

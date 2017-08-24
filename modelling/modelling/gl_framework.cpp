@@ -22,7 +22,7 @@ extern GLboolean show_frontal_plane;
 namespace modelling {
 	
 	GLfloat curr_x, curr_y;
-	glm::vec4 diff;
+	int left_shift_state, right_shift_state;
 	
 	// ! Initialize GL State
 	void initGL(void)
@@ -38,7 +38,7 @@ namespace modelling {
 		// Enable Gourard shading
 		glShadeModel(GL_SMOOTH);
 		
-		diff = glm::vec4(0.0, 0.0, 0.0, 1.0);
+		std::cout << "current mode: modelling\n";
 	}
 	
 	// !GLFW Error Callback
@@ -59,9 +59,11 @@ namespace modelling {
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		} else if (key == GLFW_KEY_M && action == GLFW_PRESS) {
 			state = s_model;
+			std::cout << "current mode: modelling\n";
 			xpos = ypos = zpos = 0.0;
 		} else if (key == GLFW_KEY_I && action == GLFW_PRESS) {
 			state = s_inspect;
+			std::cout << "current mode: inspection\n";
 			calc_centroid();
 			xpos = ypos = zpos = 0.0;
 		} else if (key == GLFW_KEY_K && action == GLFW_PRESS) {
@@ -73,6 +75,7 @@ namespace modelling {
 			state = s_load;
 			load_model();
 			state = s_inspect;
+			std::cout << "current mode: inspection\n";
 		} else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
 			switch (state) {
 				case s_model:
@@ -148,7 +151,9 @@ namespace modelling {
 				yrot = 3.1456 / 2;
 			//}
 		}
-
+		
+		left_shift_state = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+		right_shift_state = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
 	}
 	
 	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
@@ -161,10 +166,14 @@ namespace modelling {
 	
 	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-			if (state == s_start_polygon)
-				add_temp_point(curr_x - half_width, half_height - curr_y);
-		} else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-			remove_last_vertex();
+			left_shift_state = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+			right_shift_state = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
+			if (state == s_start_polygon) {
+				if (left_shift_state == GLFW_PRESS || right_shift_state == GLFW_PRESS)
+					remove_last_vertex();
+				else
+					add_temp_point(curr_x - half_width, half_height - curr_y);
+			}
 		}
 	}
 	
@@ -288,7 +297,7 @@ namespace modelling {
 //		auto last = std::unique(t_points.begin(), t_points.end(), comp_unique);
 //		t_points.erase(last, t_points.end());
 		
-		std::cout << "no. of points: " << t_points.size() << std::endl;
+		// std::cout << "no. of points: " << t_points.size() << std::endl;
 		
 		for (glm::vec4 point : t_points) {
 			p += point;
@@ -297,7 +306,7 @@ namespace modelling {
 				
 		centroid = p;
 		
-		std::cout << p.x << " " << p.y << " " << p.z << "\n";
+		// std::cout << p.x << " " << p.y << " " << p.z << "\n";
 	}
 	
 	void save_model() {
