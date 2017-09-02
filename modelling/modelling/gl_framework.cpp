@@ -330,6 +330,11 @@ namespace modelling {
 		std::ofstream model_file;
 		model_file.open(file_name, std::ios::out);
 		
+		if (!model_file.is_open()) {
+			std::cout << "could not save model :( \n";
+			return;
+		}
+		
 		int n = points.size();
 		for (int i = 0; i < n; ++i) {
 			model_file << points[i].x << " " << points[i].y << " " << points[i].z << " ";
@@ -345,6 +350,11 @@ namespace modelling {
 		
 		std::ifstream model_file;
 		model_file.open(file_name, std::ios::in);
+		
+		if (!model_file.is_open()) {
+			std::cout << "could not load model :( \n";
+			return;
+		}
 		
 		points.clear();
 		colors.clear();
