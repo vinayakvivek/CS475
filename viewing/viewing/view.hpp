@@ -55,7 +55,12 @@ class View {
 
 	glm::mat4 ortho_matrix;
 	glm::mat4 modelview_matrix;
+
 	glm::mat4 wcs_to_vcs_matrix;
+	glm::mat4 vcs_to_wcs_matrix;
+
+	glm::mat4 vcs_to_ccs_matrix;
+	glm::mat4 ccs_to_vcs_matrix;
 
 	/**
 	 * CS - coordinate system
@@ -70,6 +75,8 @@ class View {
 	void initShadersGL();
 	void initBuffersGL();
 	void addViewFrustum();
+
+	void calcStageTransformations();
 public:
 	View(GLfloat h_width, GLfloat h_height, GLfloat h_depth);
 	void addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t);
