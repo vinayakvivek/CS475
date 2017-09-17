@@ -1,7 +1,12 @@
 #version 400
 
-in vec3 vp;
+in vec4 vPosition;
+in vec4 vColor;
+uniform mat4 uModelViewMatrix;
+out vec4 color;
 
 void main () {
-	gl_Position = vec4(vp, 1.0);
+	gl_Position = uModelViewMatrix * vPosition;
+	gl_PointSize = 10.0;
+	color = vColor;
 }

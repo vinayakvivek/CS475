@@ -1,68 +1,9 @@
-//
-//  main.cpp
-//  Xcode-OpenGL-template
-//
-//  Created by vinayak vivek on 8/7/17.
-//  Copyright © 2017 vinayak. All rights reserved.
-//
-
 #include "gl_framework.hpp"
 #include "shader_util.hpp"
+#include "view.hpp"
 
-
-float points[] = {
-	0.0f,  0.5f,  0.0f,
-	0.5f, -0.5f,  0.0f,
-	-0.5f, -0.5f,  0.0f
-};
-
-GLuint shaderProgram;
-GLuint vbo, vao;
-
-void initShadersGL(void) {
-	std::string vertex_shader_file("shaders/vshader.glsl");
-	std::string fragment_shader_file("shaders/fshader.glsl");
-
-	std::vector<GLuint> shaderList;
-	shaderList.push_back(viewing::loadShaderGL(GL_VERTEX_SHADER, vertex_shader_file));
-	shaderList.push_back(viewing::loadShaderGL(GL_FRAGMENT_SHADER, fragment_shader_file));
-
-	shaderProgram = viewing::createProgramGL(shaderList);
-}
-
-void initVertexBufferGL(void) {
-
-	// Ask GL for a Vertex Buffer Object (vbo)
-	glGenBuffers (1, &vbo);
-	// Set it as the current buffer to be used by binding it
-	glBindBuffer (GL_ARRAY_BUFFER, vbo);
-	// Copy the points into the current buffer - 9 float values, start pointer and static data
-	glBufferData (GL_ARRAY_BUFFER, 9 * sizeof (float), points, GL_STATIC_DRAW);
-
-	// Ask GL for a Vertex Attribute Object (vao)
-	glGenVertexArrays (1, &vao);
-	// Set it as the current array to be used by binding it
-	glBindVertexArray (vao);
-	// Enable the vertex attribute
-	glEnableVertexAttribArray (0);
-	// This the layout of our first vertex buffer
-	// "0" means define the layout for attribute number 0. "3" means that the variables are vec3 made from every 3 floats
-	glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// glEnable(GL_PROGRAM_POINT_SIZE);
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
-
-void renderGL(void) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glUseProgram(shaderProgram);
-
-	glBindVertexArray (vao);
-
-	// Draw points 0-3 from the currently bound VAO with current in-use shader
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-}
+GLfloat half_width = 400, half_height = 300, half_depth = 500;
+View *v;
 
 int main(int argc, char** argv) {
 	//! The pointer to the GLFW window
@@ -118,14 +59,13 @@ int main(int argc, char** argv) {
 
 	// Initialize GL state
 	viewing::initGL();
-	initShadersGL();
-	initVertexBufferGL();
+	v = new View(half_width, half_height, half_depth);
 
 	// Loop until the user closes the window
 	while (glfwWindowShouldClose(window) == 0) {
 
 		// Render here
-		renderGL();
+		v->renderGL();
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
