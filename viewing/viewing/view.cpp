@@ -150,6 +150,11 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 	half_height = h_height;
 	half_depth = h_depth;
 
+	xrot = 0.0;
+	yrot = 0.0;
+	zrot = 0.0;
+	rotation_matrix = glm::mat4(1.0f);
+
 	initShadersGL();
 	initBuffersGL();
 
@@ -241,13 +246,44 @@ void View::renderGL() {
 							  -2.0, 2.0);
 
 		glBindVertexArray(vao[0]);
-		modelview_matrix = ortho_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+		modelview_matrix = ortho_matrix * rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawArrays(GL_TRIANGLES, 0, points.size());
 
 		glBindVertexArray(vao[1]);
-		modelview_matrix = ortho_matrix * vcs_to_ccs_matrix;
+		modelview_matrix = ortho_matrix * rotation_matrix * vcs_to_ccs_matrix;
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
 	}
+}
+
+void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
+	angle = deg_to_rad(-angle);
+	GLfloat sina = sin(angle), cosa = cos(angle);
+	glm::mat4 rot = glm::mat4(1.0f);
+	switch (axis) {
+		case 0:
+			// x-axis rotation
+			rot = glm::mat4(1.0, 0.0, 0.0, 0.0,
+		                   0.0, cosa, -sina, 0.0,
+		                   0.0, sina, cosa, 0.0,
+		                   0.0, 0.0, 0.0, 1.0);
+			break;
+
+		case 1:
+			rot = glm::mat4(cosa, 0.0, sina, 0.0,
+                           0.0, 1.0, 0.0, 0.0,
+                           -sina, 0.0, cosa, 0.0,
+                           0.0, 0.0, 0.0, 1.0);
+			break;
+
+		case 2:
+			rot = glm::mat4(cosa, -sina, 0.0, 0.0,
+                           sina, cosa, 0.0, 0.0,
+                           0.0, 0.0, 1.0, 0.0,
+                           0.0, 0.0, 0.0, 1.0);
+			break;
+	}
+
+	rotation_matrix = rot * rotation_matrix;
 }

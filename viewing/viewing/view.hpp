@@ -13,9 +13,9 @@
 #include "glm/gtx/string_cast.hpp"
 
 #include <vector>
+#include <cmath>
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
-
 
 class View {
 
@@ -54,6 +54,8 @@ class View {
 	GLint uModelViewMatrix;
 
 	glm::mat4 ortho_matrix;
+	glm::mat4 rotation_matrix;
+	GLfloat xrot, yrot, zrot;
 	glm::mat4 modelview_matrix;
 
 	glm::mat4 wcs_to_vcs_matrix;
@@ -77,10 +79,13 @@ class View {
 	void addViewFrustum();
 
 	void calcStageTransformations();
+	void updateModelViewMatrix();
 public:
 	View(GLfloat h_width, GLfloat h_height, GLfloat h_depth);
 	void addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t);
 	void renderGL();
+
+	void updateRotationMatrix(GLuint axis, GLfloat angle);
 };
 
 

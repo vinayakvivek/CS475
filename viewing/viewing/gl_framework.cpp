@@ -1,4 +1,7 @@
 #include "gl_framework.hpp"
+#include "view.hpp"
+
+extern View *v;
 
 namespace viewing
 {
@@ -31,7 +34,38 @@ namespace viewing
 	// !GLFW keyboard callback
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 		// !Close the window if the ESC key was pressed
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+
+		switch (key) {
+			case GLFW_KEY_ESCAPE:
+				glfwSetWindowShouldClose(window, GL_TRUE);
+				break;
+
+			case GLFW_KEY_UP:
+				v->updateRotationMatrix(1, 1);
+				break;
+
+			case GLFW_KEY_DOWN:
+				v->updateRotationMatrix(1, -1);
+				break;
+
+			case GLFW_KEY_LEFT:
+				v->updateRotationMatrix(0, 1);
+				break;
+
+			case GLFW_KEY_RIGHT:
+				v->updateRotationMatrix(0, -1);
+				break;
+
+			case GLFW_KEY_PAGE_UP:
+				v->updateRotationMatrix(2, 1);
+				break;
+
+			case GLFW_KEY_PAGE_DOWN:
+				v->updateRotationMatrix(2, -1);
+				break;
+		}
 	}
 };
