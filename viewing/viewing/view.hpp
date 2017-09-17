@@ -22,11 +22,21 @@ class View {
 	GLfloat half_height;
 	GLfloat half_depth;
 
+	// models setup
 	std::vector<glm::vec4> points;
 	std::vector<glm::vec4> colors;
 
 	GLuint points_buffer_length;
 	GLuint colors_buffer_length;
+
+	// VCS setup
+	glm::vec4 eye;
+	glm::vec4 lookAtPoint;
+	glm::vec4 upVec;
+
+	// Frustum
+	GLfloat L, R, T, B;
+  	GLfloat N, F;
 
 	GLuint num_vao;
 	GLuint num_vbo;

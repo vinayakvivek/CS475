@@ -48,6 +48,19 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 	addModel("models/fan", glm::vec3(0.5, 0.5, 0.5), glm::vec3(0.0, 30.0, 60.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/chair", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 30.0, 30.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/goggles-new", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
+
+	eye = glm::vec4(0.0, 0.0, 0.0, 1.0);
+	lookAtPoint = glm::vec4(100.0, 0.0, 0.0, 1.0);
+	glm::vec4 lookAtVector = (lookAtPoint - eye);
+	upVec = glm::vec4(0.0, 1.0, 0.0, 0.0);
+
+	// Frustum
+	L = -100;
+	R = 100;
+	T = 100;
+	B = -100;
+  	N = 100;
+  	F = 300;
 }
 
 void View::addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t) {
