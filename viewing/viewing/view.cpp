@@ -44,14 +44,17 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 	modelview_matrix = ortho_matrix;
 	glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 
-	addModel("models/hut-new");
-	// addModel("models/fan");
-	// addModel("models/chair");
-	// addModel("models/goggles-new");
+	// addModel("models/hut-new", glm::vec3(0.5, 0.5, 0.5), glm::vec3(30.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
+	addModel("models/fan", glm::vec3(0.5, 0.5, 0.5), glm::vec3(0.0, 30.0, 60.0), glm::vec3(0.0, 0.0, 0.0));
+	// addModel("models/chair", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 30.0, 30.0), glm::vec3(0.0, 0.0, 0.0));
+	// addModel("models/goggles-new", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
 }
 
-void View::addModel(std::string name) {
+void View::addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t) {
 	Model *m = new Model(name);
+	m->setScaleMatrix(s.x, s.y, s.z);
+	m->setRotationMatrix(r.x, r.y, r.z);
+	m->setTranslationMatrix(t.x, t.y, t.z);
 	std::vector<glm::vec4> *t_points = m->getTransformedPoints();
 
 	points.insert(points.end(), t_points->begin(), t_points->end());

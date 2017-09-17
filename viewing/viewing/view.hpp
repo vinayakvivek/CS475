@@ -42,7 +42,7 @@ class View {
 	void initBuffersGL();
 public:
 	View(GLfloat h_width, GLfloat h_height, GLfloat h_depth);
-	void addModel(std::string name);
+	void addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t);
 	void renderGL();
 };
 

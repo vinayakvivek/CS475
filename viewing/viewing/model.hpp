@@ -9,8 +9,11 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <cmath>
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
+#define PI 3.14159265
+#define deg_to_rad(a) (a * PI / 180.0);
 
 class Model {
 	std::string name;
@@ -21,6 +24,7 @@ class Model {
 	glm::mat4 rotation_matrix;
 	glm::mat4 translation_matrix;
 
+	void move_centroid_to_origin();
 public:
 	Model(std::string name);
 	void setScaleMatrix(GLfloat sx, GLfloat sy, GLfloat sz);

@@ -43,14 +43,47 @@ void Model::setScaleMatrix(GLfloat sx, GLfloat sy, GLfloat sz) {
 
 void Model::setRotationMatrix(GLfloat rx, GLfloat ry, GLfloat rz) {
 	/*
-		[]
+				(1    0      0    0)
+		Rx(q) = (0  cos q  sin q  0)
+		        (0 -sin q  cos q  0)
+		        (0    0     0     1)
+
+		        (cos q  0  -sin q   0)
+		Ry(q) = (0      1    0      0)
+		        (sin q  0  cos q    0)
+		        (0      0    0     1)
+
+		        ( cos q  sin q  0  0)
+		Rz(q) = (-sin q  cos q  0  0)
+		        ( 0        0    1  0)
+		        ( 0        0    0  1)
 
 		// glm::mat4 is initialized in column major order
 	*/
-	rotation_matrix = glm::mat4(1.0, 0.0, 0.0, 0.0,
-	                            0.0, 1.0, 0.0, 0.0,
-	                            0.0, 0.0, 1.0, 0.0,
-	                            0.0, 0.0, 0.0, 1.0);
+	rx = deg_to_rad(-rx);
+	ry = deg_to_rad(-ry);
+	rz = deg_to_rad(-rz);
+
+	GLfloat sinx = sin(rx), cosx = cos(rx);
+	GLfloat siny = sin(ry), cosy = cos(ry);
+	GLfloat sinz = sin(rz), cosz = cos(rz);
+
+	glm::mat4 xrot = glm::mat4(1.0, 0.0, 0.0, 0.0,
+			                   0.0, cosx, -sinx, 0.0,
+			                   0.0, sinx, cosx, 0.0,
+			                   0.0, 0.0, 0.0, 1.0);
+
+	glm::mat4 yrot = glm::mat4(cosy, 0.0, siny, 0.0,
+	                           0.0, 1.0, 0.0, 0.0,
+	                           -siny, 0.0, cosy, 0.0,
+	                           0.0, 0.0, 0.0, 1.0);
+
+	glm::mat4 zrot = glm::mat4(cosz, -sinz, 0.0, 0.0,
+	                           sinz, cosz, 0.0, 0.0,
+	                           0.0, 0.0, 1.0, 0.0,
+	                           0.0, 0.0, 0.0, 1.0);
+
+	rotation_matrix = zrot * yrot * xrot;
 }
 
 void Model::setTranslationMatrix(GLfloat tx, GLfloat ty, GLfloat tz) {
@@ -68,8 +101,24 @@ void Model::setTranslationMatrix(GLfloat tx, GLfloat ty, GLfloat tz) {
 	                               tx, ty, tz, 1.0);
 }
 
-std::vector<glm::vec4>* Model::getTransformedPoints() {
+void Model::move_centroid_to_origin() {
+	glm::vec3 p = glm::vec3(0.0, 0.0, 0.0);
+	int n = points.size();
 
+	for (glm::vec4 point : points) {
+		p += glm::vec3(point);
+	}
+	p /= n;
+
+	glm::vec4 centroid(p, 0.0);
+
+	for (int i = 0; i < n; ++i) {
+		points[i] -= centroid;
+	}
+}
+
+std::vector<glm::vec4>* Model::getTransformedPoints() {
+	move_centroid_to_origin();
 	glm::mat4 model_matrix = translation_matrix * scale_matrix * rotation_matrix;
 
 	std::vector<glm::vec4> *t_points = new std::vector<glm::vec4>();
