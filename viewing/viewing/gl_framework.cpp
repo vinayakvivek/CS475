@@ -84,6 +84,10 @@ namespace viewing
 				v->updateCS(2);
 				break;
 
+			case GLFW_KEY_3:
+				// CCS
+				v->updateCS(3);
+				break;
 		}
 	}
 };

@@ -15,7 +15,9 @@ void View::initShadersGL() {
 void View::initBuffersGL() {
 	vPosition = glGetAttribLocation(shaderProgram, "vPosition");
 	vColor = glGetAttribLocation(shaderProgram, "vColor");
-	uModelViewMatrix = glGetUniformLocation(shaderProgram, "uModelViewMatrix");
+	uModelMatrix = glGetUniformLocation(shaderProgram, "uModelMatrix");
+	uOrthoMatrix = glGetUniformLocation(shaderProgram, "uOrthoMatrix");
+	uPerspectiveDivide = glGetUniformLocation(shaderProgram, "uPerspectiveDivide");
 
 	num_vao = 2;
 	num_vbo = 5;
@@ -65,6 +67,11 @@ void View::calcStageTransformations() {
 		VCS to CCS
 
 		A = Nm * Sc * Sh;
+					[	2n / (r-l)		0		(r+l) / (r-l)		0		]
+		v_ccs   =  	[		0		2n / (t-b)	(t+b) / (t-b)		0		] * v_vcs
+					[		0			0		(f+n) / (n-f)	2fn / (n-f)	]
+					[		0			0			-1				0		]
+
 	*/
 
 	vcs_to_ccs_matrix = glm::mat4(glm::vec4(2*N/(R-L), 0.0, 0.0, 0.0),
@@ -159,7 +166,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 	zrot = 0.0;
 	rotation_matrix = glm::mat4(1.0f);
 	ortho_matrix = glm::mat4(1.0f);
-	modelview_matrix = glm::mat4(1.0f);
+	model_matrix = glm::mat4(1.0f);
 
 	initShadersGL();
 	initBuffersGL();
@@ -183,10 +190,19 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 
   	updateCS(0);
 
-  	// addModel("models/hut-new", glm::vec3(0.2, 0.2, 0.2), glm::vec3(30.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
-	addModel("models/fan", glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 30.0, 60.0), glm::vec3(0.0, 0.0, 0.0));
+  	addModel("models/hut-new", glm::vec3(0.3, 0.3, 0.3), glm::vec3(30.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
+	// addModel("models/fan", glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 30.0, 60.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/chair", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 30.0, 30.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/goggles-new", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
+
+  	// test();
+}
+
+void View::test() {
+	model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+	for (glm::vec4 p : frustum_points) {
+		std::cout << glm::to_string(p) << " - " << glm::to_string(model_matrix * p) << "\n";
+	}
 }
 
 void View::addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t) {
@@ -218,31 +234,17 @@ void View::addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t) {
 void View::renderGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (CS == 0) {
-		glBindVertexArray(vao[0]);
-		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
-		glDrawArrays(GL_TRIANGLES, 0, points.size());
+	glBindVertexArray(vao[0]);
+	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
+	glUniformMatrix4fv(uOrthoMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
+	glUniform1i(uPerspectiveDivide, perspective_divide);
+	glDrawArrays(GL_TRIANGLES, 0, points.size());
 
-		glBindVertexArray(vao[1]);
-		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
-		glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
-	} else if (CS == 1) {
-		glBindVertexArray(vao[0]);
-		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
-		glDrawArrays(GL_TRIANGLES, 0, points.size());
-
-		glBindVertexArray(vao[1]);
-		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
-		glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
-	} else if (CS == 2) {
-		glBindVertexArray(vao[0]);
-		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
-		glDrawArrays(GL_TRIANGLES, 0, points.size());
-
-		glBindVertexArray(vao[1]);
-		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
-		glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
-	}
+	glBindVertexArray(vao[1]);
+	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
+	glUniformMatrix4fv(uOrthoMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
+	glUniform1i(uPerspectiveDivide, perspective_divide);
+	glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
@@ -303,20 +305,30 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-			modelview_matrix = ortho_matrix * rotation_matrix;
+			model_matrix = rotation_matrix;
+			perspective_divide = 0;
 			break;
 		case 1:
 			// VCS
 			ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-			modelview_matrix = ortho_matrix * rotation_matrix * wcs_to_vcs_matrix;
+			model_matrix = rotation_matrix * wcs_to_vcs_matrix;
+			perspective_divide = 0;
 			break;
 		case 2:
 			ortho_matrix = glm::ortho(-2.0, 2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
-			modelview_matrix = ortho_matrix * rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+			perspective_divide = 0;
+			break;
+		case 3:
+			ortho_matrix = glm::ortho(-2.0, 2.0,
+							  -2.0, 2.0,
+							  -2.0, 2.0);
+			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+			perspective_divide = 1;
 			break;
 	}
 }

@@ -51,12 +51,14 @@ class View {
 	GLuint shaderProgram;
 	GLuint *vbo, *vao, *veo;
 	GLint vPosition, vColor;
-	GLint uModelViewMatrix;
+	GLint uModelMatrix, uOrthoMatrix;
+	GLint uPerspectiveDivide;
 
 	glm::mat4 ortho_matrix;
 	glm::mat4 rotation_matrix;
 	GLfloat xrot, yrot, zrot;
-	glm::mat4 modelview_matrix;
+	glm::mat4 model_matrix;
+	GLuint perspective_divide;
 
 	glm::mat4 wcs_to_vcs_matrix;
 	glm::mat4 vcs_to_wcs_matrix;
@@ -79,7 +81,8 @@ class View {
 	void addViewFrustum();
 
 	void calcStageTransformations();
-	void updateModelViewMatrix();
+	void calcPointsNDCS();
+	void test();
 public:
 	View(GLfloat h_width, GLfloat h_height, GLfloat h_depth);
 	void addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t);
