@@ -258,32 +258,50 @@ void View::renderGL() {
 }
 
 void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
-	angle = deg_to_rad(-angle);
-	GLfloat sina = sin(angle), cosa = cos(angle);
-	glm::mat4 rot = glm::mat4(1.0f);
+	// angle = deg_to_rad(-angle);
+	// GLfloat sina = sin(angle), cosa = cos(angle);
+	// glm::mat4 rot = glm::mat4(1.0f);
+	// switch (axis) {
+	// 	case 0:
+	// 		// x-axis rotation
+	// 		rot = glm::mat4(1.0, 0.0, 0.0, 0.0,
+	// 	                   0.0, cosa, -sina, 0.0,
+	// 	                   0.0, sina, cosa, 0.0,
+	// 	                   0.0, 0.0, 0.0, 1.0);
+	// 		break;
+
+	// 	case 1:
+	// 		rot = glm::mat4(cosa, 0.0, sina, 0.0,
+ //                           0.0, 1.0, 0.0, 0.0,
+ //                           -sina, 0.0, cosa, 0.0,
+ //                           0.0, 0.0, 0.0, 1.0);
+	// 		break;
+
+	// 	case 2:
+	// 		rot = glm::mat4(cosa, -sina, 0.0, 0.0,
+ //                           sina, cosa, 0.0, 0.0,
+ //                           0.0, 0.0, 1.0, 0.0,
+ //                           0.0, 0.0, 0.0, 1.0);
+	// 		break;
+	// }
+
+	// rotation_matrix = rot * rotation_matrix;
+
+	angle = deg_to_rad(angle);
 	switch (axis) {
 		case 0:
 			// x-axis rotation
-			rot = glm::mat4(1.0, 0.0, 0.0, 0.0,
-		                   0.0, cosa, -sina, 0.0,
-		                   0.0, sina, cosa, 0.0,
-		                   0.0, 0.0, 0.0, 1.0);
+			xrot += angle;
 			break;
-
 		case 1:
-			rot = glm::mat4(cosa, 0.0, sina, 0.0,
-                           0.0, 1.0, 0.0, 0.0,
-                           -sina, 0.0, cosa, 0.0,
-                           0.0, 0.0, 0.0, 1.0);
+			yrot += angle;
 			break;
-
 		case 2:
-			rot = glm::mat4(cosa, -sina, 0.0, 0.0,
-                           sina, cosa, 0.0, 0.0,
-                           0.0, 0.0, 1.0, 0.0,
-                           0.0, 0.0, 0.0, 1.0);
+			zrot += angle;
 			break;
 	}
 
-	rotation_matrix = rot * rotation_matrix;
+	rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
+	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
+	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
 }
