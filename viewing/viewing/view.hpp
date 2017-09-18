@@ -86,6 +86,7 @@ public:
 	void renderGL();
 
 	void updateRotationMatrix(GLuint axis, GLfloat angle);
+	void updateCS(int val);
 };
 
 

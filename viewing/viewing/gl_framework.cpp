@@ -43,6 +43,7 @@ namespace viewing
 				glfwSetWindowShouldClose(window, GL_TRUE);
 				break;
 
+			// rotation
 			case GLFW_KEY_UP:
 				v->updateRotationMatrix(1, 1);
 				break;
@@ -66,6 +67,23 @@ namespace viewing
 			case GLFW_KEY_PAGE_DOWN:
 				v->updateRotationMatrix(2, -1);
 				break;
+
+			// coordinate system change
+			case GLFW_KEY_0:
+				// WCS
+				v->updateCS(0);
+				break;
+
+			case GLFW_KEY_1:
+				// VCS
+				v->updateCS(1);
+				break;
+
+			case GLFW_KEY_2:
+				// CCS
+				v->updateCS(2);
+				break;
+
 		}
 	}
 };

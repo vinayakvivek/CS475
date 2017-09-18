@@ -129,6 +129,10 @@ void View::addViewFrustum() {
 
 	GLuint f_buffer_len = frustum_points.size() * 4 * sizeof(GLfloat);
 
+	for (int i = 0; i < frustum_points.size(); ++i) {
+		frustum_points[i] = vcs_to_wcs_matrix * frustum_points[i];
+	}
+
 	glBindVertexArray(vao[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 
@@ -154,6 +158,8 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 	yrot = 0.0;
 	zrot = 0.0;
 	rotation_matrix = glm::mat4(1.0f);
+	ortho_matrix = glm::mat4(1.0f);
+	modelview_matrix = glm::mat4(1.0f);
 
 	initShadersGL();
 	initBuffersGL();
@@ -175,10 +181,10 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 
   	addViewFrustum();
 
-  	CS = 2;
+  	updateCS(0);
 
   	// addModel("models/hut-new", glm::vec3(0.2, 0.2, 0.2), glm::vec3(30.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
-	addModel("models/fan", glm::vec3(0.2, 0.2, 0.2), glm::vec3(0.0, 30.0, 60.0), glm::vec3(0.0, 0.0, 0.0));
+	addModel("models/fan", glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 30.0, 60.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/chair", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 30.0, 30.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/goggles-new", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
 }
@@ -213,45 +219,27 @@ void View::renderGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (CS == 0) {
-		ortho_matrix = glm::ortho(-half_width, half_width,
-							  -half_height, half_height,
-							  -half_depth, half_depth);
-
 		glBindVertexArray(vao[0]);
-		modelview_matrix = ortho_matrix;
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawArrays(GL_TRIANGLES, 0, points.size());
 
 		glBindVertexArray(vao[1]);
-		modelview_matrix = ortho_matrix * vcs_to_wcs_matrix;
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
 	} else if (CS == 1) {
-		ortho_matrix = glm::ortho(-half_width, half_width,
-							  -half_height, half_height,
-							  -half_depth, half_depth);
-
 		glBindVertexArray(vao[0]);
-		modelview_matrix = ortho_matrix * wcs_to_vcs_matrix;
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawArrays(GL_TRIANGLES, 0, points.size());
 
 		glBindVertexArray(vao[1]);
-		modelview_matrix = ortho_matrix;
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
 	} else if (CS == 2) {
-		ortho_matrix = glm::ortho(-2.0, 2.0,
-							  -2.0, 2.0,
-							  -2.0, 2.0);
-
 		glBindVertexArray(vao[0]);
-		modelview_matrix = ortho_matrix * rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawArrays(GL_TRIANGLES, 0, points.size());
 
 		glBindVertexArray(vao[1]);
-		modelview_matrix = ortho_matrix * rotation_matrix * vcs_to_ccs_matrix;
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelview_matrix));
 		glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
 	}
@@ -304,4 +292,31 @@ void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
 	rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
+	updateCS(CS);
+}
+
+void View::updateCS(int val) {
+	CS = val;
+	switch (CS) {
+		case 0:
+			// WCS
+			ortho_matrix = glm::ortho(-half_width, half_width,
+							  -half_height, half_height,
+							  -half_depth, half_depth);
+			modelview_matrix = ortho_matrix * rotation_matrix;
+			break;
+		case 1:
+			// VCS
+			ortho_matrix = glm::ortho(-half_width, half_width,
+							  -half_height, half_height,
+							  -half_depth, half_depth);
+			modelview_matrix = ortho_matrix * rotation_matrix * wcs_to_vcs_matrix;
+			break;
+		case 2:
+			ortho_matrix = glm::ortho(-2.0, 2.0,
+							  -2.0, 2.0,
+							  -2.0, 2.0);
+			modelview_matrix = ortho_matrix * rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+			break;
+	}
 }
