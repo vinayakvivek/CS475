@@ -5,6 +5,8 @@
 #include <sstream>
 #include <string>
 
+#define NMODEL 1
+
 GLfloat half_width = 400, half_height = 400, half_depth = 400;
 View *v;
 
@@ -61,10 +63,9 @@ void initView() {
 		return;
 	}
 
-	ModelData *models[3];
-	models[0] = readModelData(scene_file);
-	models[1] = readModelData(scene_file);
-	models[2] = readModelData(scene_file);
+	ModelData *models[NMODEL];
+	for (int i = 0; i < NMODEL; ++i)
+		models[i] = readModelData(scene_file);
 
 	// VCS setup
 	glm::vec3 eye;
@@ -109,7 +110,7 @@ void initView() {
 	GLfloat frustum[] = {L, R, T, B, N, F};
 	v = new View(half_width, half_height, half_depth, vcs, frustum);
 
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < NMODEL; ++i) {
 		v->addModel(models[i]->name, models[i]->scale, models[i]->rot, models[i]->trans);
 	}
 

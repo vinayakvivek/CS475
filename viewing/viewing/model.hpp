@@ -13,7 +13,7 @@
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 #define PI 3.14159265
-#define deg_to_rad(a) (a * PI / 180.0);
+#define deg_to_rad(a) (a * PI / 180.0)
 
 class Model {
 	std::string name;

@@ -218,19 +218,14 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth,
   	N = frustum[4];
   	F = frustum[5];
 
+  	// calculates and sets WCS <-> VCS <-> CCS transformations
   	calcStageTransformations();
 
   	addViewFrustum();
   	addEye();
 
+  	// default coordinate system : WCS
   	updateCS(0);
-
-  	// addModel("models/hut-new.raw", glm::vec3(0.3, 0.3, 0.3), glm::vec3(30.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
-	// addModel("models/fan", glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 30.0, 60.0), glm::vec3(0.0, 0.0, 0.0));
-	// addModel("models/chair", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 30.0, 30.0), glm::vec3(0.0, 0.0, 0.0));
-	// addModel("models/goggles-new", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
-
-  	// test();
 }
 
 void View::test() {
@@ -338,6 +333,7 @@ void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
 			break;
 	}
 
+
 	rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
@@ -345,7 +341,16 @@ void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
 }
 
 void View::updateCS(int val) {
-	CS = val;
+	if (val != CS) {
+		xrot = 0.0;
+		yrot = (val != 0 && val != 1) ? PI : 0.0;
+		zrot = 0.0;
+		CS = val;
+		rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
+		rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
+		rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
+	}
+
 	switch (CS) {
 		case 0:
 			// WCS
