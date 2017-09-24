@@ -6,8 +6,8 @@ Model::Model(std::string name) {
 	rotation_matrix = glm::mat4(1.0f);
 	translation_matrix = glm::mat4(1.0f);
 
-	// file name will be <name>.raw
-	std::string file_name = name + ".raw";
+	// file name will be <name>
+	std::string file_name = name;
 
 	std::ifstream model_file;
 	model_file.open(file_name, std::ios::in);

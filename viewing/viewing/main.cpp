@@ -2,8 +2,119 @@
 #include "shader_util.hpp"
 #include "view.hpp"
 
+#include <sstream>
+#include <string>
+
 GLfloat half_width = 400, half_height = 400, half_depth = 400;
 View *v;
+
+struct ModelData {
+	std::string name;
+	glm::vec3 scale, rot, trans;
+
+	void print() {
+		std::cout << name << " : ";
+		std::cout << glm::to_string(scale) << " ";
+		std::cout << glm::to_string(rot) << " ";
+		std::cout << glm::to_string(trans) << "\n";
+	}
+};
+
+ModelData *readModelData(std::ifstream &scene_file) {
+	ModelData *data = new ModelData;
+	std::string line;
+	int lines_read = 0;
+	while (std::getline(scene_file, line)) {
+		if (line[0] != '#' && !line.empty()) {
+			if (lines_read == 0) {
+				data->name = line;
+			} else {
+				std::istringstream iss(line);
+				float a, b, c;
+				if (!(iss >> a >> b >> c)) {
+					std::cout << "error reading!\n";
+					break;
+				}
+
+				if (lines_read == 1)
+					data->scale = glm::vec3(a, b, c);
+				else if (lines_read == 2)
+					data->rot = glm::vec3(a, b, c);
+				else if (lines_read == 3)
+					data->trans = glm::vec3(a, b, c);
+			}
+			lines_read++;
+			if (lines_read == 4)
+				break;
+		}
+	}
+	return data;
+}
+
+void initView() {
+	std::string file_name = "myscene.scn";
+	std::ifstream scene_file;
+	scene_file.open(file_name, std::ios::in);
+
+	if (!scene_file.is_open()) {
+		std::cout << "could not load scene file :( \n";
+		return;
+	}
+
+	ModelData *models[3];
+	models[0] = readModelData(scene_file);
+	models[1] = readModelData(scene_file);
+	models[2] = readModelData(scene_file);
+
+	// VCS setup
+	glm::vec3 eye;
+	glm::vec3 lookAtPoint;
+	glm::vec3 upVec;
+
+	// Frustum
+	GLfloat L, R, T, B;
+  	GLfloat N, F;
+
+  	std::string line;
+	int lines_read = 0;
+	while (std::getline(scene_file, line) && lines_read <= 5) {
+		if (line[0] != '#' && !line.empty()) {
+			float a, b, c;
+			std::istringstream iss(line);
+			switch (lines_read) {
+				case 0:
+					iss >> a >> b >> c;
+					eye = glm::vec3(a, b, c);
+					break;
+				case 1:
+					iss >> a >> b >> c;
+					lookAtPoint = glm::vec3(a, b, c);
+					break;
+				case 2:
+					iss >> a >> b >> c;
+					upVec = glm::vec3(a, b, c);
+					break;
+				case 3:
+					iss >> L >> R >> T >> B;
+					break;
+				case 4:
+					iss >> N >> F;
+					break;
+			}
+			lines_read++;
+		}
+	}
+
+	glm::vec3 vcs[] = {eye, lookAtPoint, upVec};
+	GLfloat frustum[] = {L, R, T, B, N, F};
+	v = new View(half_width, half_height, half_depth, vcs, frustum);
+
+	for (int i = 0; i < 3; ++i) {
+		v->addModel(models[i]->name, models[i]->scale, models[i]->rot, models[i]->trans);
+	}
+
+	scene_file.close();
+}
 
 int main(int argc, char** argv) {
 	//! The pointer to the GLFW window
@@ -59,7 +170,7 @@ int main(int argc, char** argv) {
 
 	// Initialize GL state
 	viewing::initGL();
-	v = new View(half_width, half_height, half_depth);
+	initView();
 
 	// Loop until the user closes the window
 	while (glfwWindowShouldClose(window) == 0) {

@@ -187,7 +187,8 @@ void View::addEye() {
 	glBufferSubData(GL_ARRAY_BUFFER, buffer_len, buffer_len, &eye_color);
 }
 
-View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
+View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth,
+		   glm::vec3 *vcs, GLfloat *frustum) {
 	half_width = h_width;
 	half_height = h_height;
 	half_depth = h_depth;
@@ -204,18 +205,18 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 	initShadersGL();
 	initBuffersGL();
 
-	eye = glm::vec3(200.0, 0.0, -200.0);
-	lookAtPoint = glm::vec3(0.0, 0.0, 0.0);
-	upVec = glm::vec3(0.0, 1.0, 0.0);
+	eye = vcs[0];
+	lookAtPoint = vcs[1];
+	upVec = vcs[2];
 	upVec = glm::normalize(upVec);
 
 	// Frustum
-	L = -50;
-	R = 50;
-	T = 50;
-	B = -50;
-  	N = 200;
-  	F = 500;
+	L = frustum[0];
+	R = frustum[1];
+	T = frustum[2];
+	B = frustum[3];
+  	N = frustum[4];
+  	F = frustum[5];
 
   	calcStageTransformations();
 
@@ -224,7 +225,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 
   	updateCS(0);
 
-  	addModel("models/hut-new", glm::vec3(0.3, 0.3, 0.3), glm::vec3(30.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
+  	// addModel("models/hut-new.raw", glm::vec3(0.3, 0.3, 0.3), glm::vec3(30.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/fan", glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 30.0, 60.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/chair", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 30.0, 30.0), glm::vec3(0.0, 0.0, 0.0));
 	// addModel("models/goggles-new", glm::vec3(1.0, 1.0, 1.0), glm::vec3(-90.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 0.0));
