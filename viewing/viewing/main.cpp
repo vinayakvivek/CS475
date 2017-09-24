@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-#define NMODEL 1
+#define NMODEL 3
 
 GLfloat half_width = 400, half_height = 400, half_depth = 400;
 View *v;

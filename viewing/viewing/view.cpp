@@ -357,7 +357,8 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-			model_matrix = rotation_matrix;
+			ortho_matrix = ortho_matrix * rotation_matrix;
+			model_matrix = glm::mat4(1.0f);
 			perspective_divide = 0;
 			to_dcs = 0;
 			break;
@@ -366,7 +367,8 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-			model_matrix = rotation_matrix * wcs_to_vcs_matrix;
+			ortho_matrix = ortho_matrix * rotation_matrix;
+			model_matrix = wcs_to_vcs_matrix;
 			perspective_divide = 0;
 			to_dcs = 0;
 			break;
@@ -374,7 +376,8 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-2.0, 2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
-			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+			ortho_matrix = ortho_matrix * rotation_matrix;
+			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 0;
 			to_dcs = 0;
 			break;
@@ -382,7 +385,8 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-2.0, 2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
-			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+			ortho_matrix = ortho_matrix * rotation_matrix;
+			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 1;
 			to_dcs = 0;
 			break;
@@ -390,7 +394,8 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width-50, half_width+50,
 							  -half_height-50, half_height+50,
 							  -half_depth-50, half_depth+50);
-			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+			ortho_matrix = ortho_matrix * rotation_matrix;
+			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 1;
 			to_dcs = 1;
 			break;
