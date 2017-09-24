@@ -93,6 +93,15 @@ namespace viewing
 				// DCS
 				v->updateCS(4);
 				break;
+
+			// clip
+			case GLFW_KEY_C:
+				v->clip();
+				break;
+
+			case GLFW_KEY_X:
+				v->unClip();
+				break;
 		}
 	}
 };

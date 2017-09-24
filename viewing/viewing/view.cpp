@@ -226,6 +226,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth,
 
   	// default coordinate system : WCS
   	updateCS(0);
+  	clipped = false;
 }
 
 void View::test() {
@@ -245,8 +246,8 @@ void View::addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t) {
 	points.insert(points.end(), t_points->begin(), t_points->end());
 	colors.insert(colors.end(), m->getColors().begin(), m->getColors().end());
 
-	points_buffer_length = points.size() * 4 * sizeof(GLfloat);
-	colors_buffer_length = colors.size() * 4 * sizeof(GLfloat);
+	GLuint points_buffer_length = points.size() * 4 * sizeof(GLfloat);
+	GLuint colors_buffer_length = colors.size() * 4 * sizeof(GLfloat);
 
 	glBindVertexArray(vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
@@ -259,6 +260,8 @@ void View::addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t) {
 	glBufferData(GL_ARRAY_BUFFER, points_buffer_length + colors_buffer_length, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, points_buffer_length, &points[0]);
 	glBufferSubData(GL_ARRAY_BUFFER, points_buffer_length, colors_buffer_length, &colors[0]);
+
+	num_points = points.size();
 }
 
 void View::renderGL() {
@@ -270,7 +273,7 @@ void View::renderGL() {
 	glUniform1i(uPerspectiveDivide, perspective_divide);
 	glUniform1i(uToDCS, to_dcs);
 	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
-	glDrawArrays(GL_TRIANGLES, 0, points.size());
+	glDrawArrays(GL_TRIANGLES, 0, num_points);
 
 	glBindVertexArray(vao[1]);
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
@@ -400,4 +403,139 @@ void View::updateCS(int val) {
 			to_dcs = 1;
 			break;
 	}
+}
+
+// planes
+glm::vec4 planes[] = {
+	glm::vec4(1, 0, 0, 1),  // X1
+	glm::vec4(-1, 0, 0, 1),  // X2
+	glm::vec4(0, 1, 0, 1),   // Y1
+	glm::vec4(0, -1, 0, 1),  // Y2
+	glm::vec4(0, 0, 1, 1),  // Z1
+	glm::vec4(0, 0, -1, 1)   // Z2
+};
+
+GLuint outCode(const glm::vec4 &p) {
+	GLuint out_code = 0;
+    for (int i = 0; i < 6; ++i) {
+        if (glm::dot(p, planes[i]) < 0) out_code |= (1 << i);
+    }
+    return out_code;
+}
+
+std::vector<glm::vec4> clipWithPlane(int plane_id, std::vector<glm::vec4> poly) {
+	glm::vec4 plane = planes[plane_id];
+	// std::cout << glm::to_string(plane) << "\n";
+	std::vector<glm::vec4> new_poly;
+	for (int i = 0; i < 3; ++i) {
+		glm::vec4 p1 = poly[i], p2 = poly[(i+1)%3];
+		GLfloat a1, a2, alpha;
+		a1 = dot(p1, plane);
+		a2 = dot(p2, plane);
+
+		// std::cout << i << " " << glm::to_string(p1) << " " << glm::to_string(p2) << " : " << a1 << ", " << a2 << "\n";
+
+		if (a1 == a2)
+			return new_poly;
+
+		alpha = a1 / (a1 - a2);
+		glm::vec4 pi = p1 * (1 - alpha) + p2 * alpha;
+
+		if (a1 > 0 && a2 > 0) {
+			new_poly.push_back(p2);
+		} else if (a1 > 0 && a2 < 0) {
+			new_poly.push_back(pi);
+		} else if (a1 < 0 && a2 > 0) {
+			new_poly.push_back(pi);
+			new_poly.push_back(p2);
+		}
+	}
+
+	// std::cout << "plane : " << plane_id << "\n";
+	// for (glm::vec4 p : new_poly) {
+	// 	std::cout << glm::to_string(p) << "\n";
+	// }
+	// std::cout << "\n";
+
+
+	return new_poly;
+}
+
+void View::clip() {
+
+	if (clipped)
+		return;
+
+	glm::mat4 matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+	glm::mat4 inv = glm::inverse(matrix);
+
+	for (int i = 0; i < 3; ++i) {
+		std::cout << glm::to_string(points[i]) << "\n";
+	}
+	std::cout << "\n";
+
+	std::vector<glm::vec4> new_poly({matrix * points[0], matrix * points[1], matrix * points[2]});
+	new_poly = clipWithPlane(2, new_poly);
+	for (int i = 0; i < new_poly.size(); ++i) {
+		new_poly[i] = inv * new_poly[i];
+	}
+
+	std::vector<glm::vec4> new_points;
+	glm::vec4 c(1.0, 1.0, 1.0, 1.0);
+	std::vector<glm::vec4> colors;
+	int n = new_poly.size();
+	for (int i = 0; i < n - 2; ++i) {
+		new_points.push_back(new_poly[0]);
+		new_points.push_back(new_poly[(i+1)%n]);
+		new_points.push_back(new_poly[(i+2)%n]);
+
+		colors.push_back(c);
+		colors.push_back(c);
+		colors.push_back(c);
+	}
+
+	for (int i = 0; i < new_points.size(); ++i) {
+		std::cout << glm::to_string(new_points[i]) << "\n";
+	}
+	std::cout << "\n\n";
+
+	glBindVertexArray(vao[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+
+	GLuint buffer_length = new_points.size() * 4 * sizeof(GLfloat);
+
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(buffer_length));
+
+	glBufferData(GL_ARRAY_BUFFER, buffer_length + buffer_length, NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, buffer_length, &new_points[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, buffer_length, buffer_length, &colors[0]);
+
+	clipped = true;
+	num_points = new_points.size();
+}
+
+void View::unClip() {
+	if (!clipped)
+		return;
+
+	GLuint points_buffer_length = points.size() * 4 * sizeof(GLfloat);
+	GLuint colors_buffer_length = colors.size() * 4 * sizeof(GLfloat);
+
+	glBindVertexArray(vao[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points_buffer_length));
+
+	glBufferData(GL_ARRAY_BUFFER, points_buffer_length + colors_buffer_length, NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, points_buffer_length, &points[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, points_buffer_length, colors_buffer_length, &colors[0]);
+
+	clipped = false;
+	num_points = points.size();
 }

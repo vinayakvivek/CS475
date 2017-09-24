@@ -29,8 +29,12 @@ class View {
 	std::vector<glm::vec4> points;
 	std::vector<glm::vec4> colors;
 
-	GLuint points_buffer_length;
-	GLuint colors_buffer_length;
+	// clipping
+	std::vector<glm::vec4> clipped_points;
+	std::vector<glm::vec4> clipped_colors;
+	bool clipped;
+
+	GLuint num_points;
 
 	// VCS setup
 	glm::vec3 eye;
@@ -101,6 +105,8 @@ public:
 
 	void updateRotationMatrix(GLuint axis, GLfloat angle);
 	void updateCS(int val);
+	void clip();
+	void unClip();
 };
 
 
