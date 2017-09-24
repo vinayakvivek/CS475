@@ -88,6 +88,11 @@ namespace viewing
 				// CCS
 				v->updateCS(3);
 				break;
+
+			case GLFW_KEY_4:
+				// DCS
+				v->updateCS(4);
+				break;
 		}
 	}
 };

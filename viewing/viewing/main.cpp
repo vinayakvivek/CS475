@@ -2,7 +2,7 @@
 #include "shader_util.hpp"
 #include "view.hpp"
 
-GLfloat half_width = 400, half_height = 300, half_depth = 500;
+GLfloat half_width = 400, half_height = 400, half_depth = 400;
 View *v;
 
 int main(int argc, char** argv) {
@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// ! Create a windowed mode window and its OpenGL context
-	window = glfwCreateWindow(640, 480, "CS475/CS675 OpenGL Framework", NULL, NULL);
+	window = glfwCreateWindow(half_width * 2, half_height * 2, "CS475 Assignment 2 : Viewing", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		return -1;

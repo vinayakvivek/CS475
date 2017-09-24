@@ -18,6 +18,8 @@ void View::initBuffersGL() {
 	uModelMatrix = glGetUniformLocation(shaderProgram, "uModelMatrix");
 	uOrthoMatrix = glGetUniformLocation(shaderProgram, "uOrthoMatrix");
 	uPerspectiveDivide = glGetUniformLocation(shaderProgram, "uPerspectiveDivide");
+	uWindowLimits = glGetUniformLocation(shaderProgram, "uWindowLimits");
+	uToDCS = glGetUniformLocation(shaderProgram, "uToDCS");
 
 	num_vao = 2;
 	num_vbo = 5;
@@ -79,6 +81,16 @@ void View::calcStageTransformations() {
 	                              glm::vec4((R+L)/(R-L), (T+B)/(T-B), -(F+N)/(F-N), -1.0),
 	                              glm::vec4(0.0, 0.0, -2*F*N/(F-N), 0.0));
 	ccs_to_vcs_matrix = glm::inverse(vcs_to_ccs_matrix);
+
+	/*
+		NDCS -> DCS
+
+		x'  = 	0.5 * (x+1) * (R - L) + L
+		y'  = 	0.5 * (y+1) * (T - B) + B
+		z'  = 	0.5 * (z+1)
+	*/
+
+
 }
 
 void View::addViewFrustum() {
@@ -168,6 +180,8 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 	ortho_matrix = glm::mat4(1.0f);
 	model_matrix = glm::mat4(1.0f);
 
+	window_limits = glm::vec4(half_width, -half_width, half_height, -half_height);
+
 	initShadersGL();
 	initBuffersGL();
 
@@ -238,12 +252,16 @@ void View::renderGL() {
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
 	glUniformMatrix4fv(uOrthoMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
 	glUniform1i(uPerspectiveDivide, perspective_divide);
+	glUniform1i(uToDCS, to_dcs);
+	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
 	glDrawArrays(GL_TRIANGLES, 0, points.size());
 
 	glBindVertexArray(vao[1]);
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
 	glUniformMatrix4fv(uOrthoMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
 	glUniform1i(uPerspectiveDivide, perspective_divide);
+	glUniform1i(uToDCS, to_dcs);
+	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
 	glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
 }
 
@@ -307,6 +325,7 @@ void View::updateCS(int val) {
 							  -half_depth, half_depth);
 			model_matrix = rotation_matrix;
 			perspective_divide = 0;
+			to_dcs = 0;
 			break;
 		case 1:
 			// VCS
@@ -315,6 +334,7 @@ void View::updateCS(int val) {
 							  -half_depth, half_depth);
 			model_matrix = rotation_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 0;
+			to_dcs = 0;
 			break;
 		case 2:
 			ortho_matrix = glm::ortho(-2.0, 2.0,
@@ -322,6 +342,7 @@ void View::updateCS(int val) {
 							  -2.0, 2.0);
 			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 0;
+			to_dcs = 0;
 			break;
 		case 3:
 			ortho_matrix = glm::ortho(-2.0, 2.0,
@@ -329,6 +350,15 @@ void View::updateCS(int val) {
 							  -2.0, 2.0);
 			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 1;
+			to_dcs = 0;
+			break;
+		case 4:
+			ortho_matrix = glm::ortho(-half_width, half_width,
+							  -half_height, half_height,
+							  -half_depth, half_depth);
+			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
+			perspective_divide = 1;
+			to_dcs = 1;
 			break;
 	}
 }
