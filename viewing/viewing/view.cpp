@@ -427,8 +427,9 @@ std::vector<glm::vec4> clipWithPlane(int plane_id, std::vector<glm::vec4> poly) 
 	glm::vec4 plane = planes[plane_id];
 	// std::cout << glm::to_string(plane) << "\n";
 	std::vector<glm::vec4> new_poly;
-	for (int i = 0; i < 3; ++i) {
-		glm::vec4 p1 = poly[i], p2 = poly[(i+1)%3];
+	int n = poly.size();
+	for (int i = 0; i < n; ++i) {
+		glm::vec4 p1 = poly[i], p2 = poly[(i+1)%n];
 		GLfloat a1, a2, alpha;
 		a1 = dot(p1, plane);
 		a2 = dot(p2, plane);
@@ -475,7 +476,10 @@ void View::clip() {
 	std::cout << "\n";
 
 	std::vector<glm::vec4> new_poly({matrix * points[0], matrix * points[1], matrix * points[2]});
-	new_poly = clipWithPlane(2, new_poly);
+	for (int i = 0; i < 6; ++i) {
+		new_poly = clipWithPlane(i, new_poly);
+	}
+
 	for (int i = 0; i < new_poly.size(); ++i) {
 		new_poly[i] = inv * new_poly[i];
 	}
