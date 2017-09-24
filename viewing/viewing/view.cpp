@@ -21,8 +21,8 @@ void View::initBuffersGL() {
 	uWindowLimits = glGetUniformLocation(shaderProgram, "uWindowLimits");
 	uToDCS = glGetUniformLocation(shaderProgram, "uToDCS");
 
-	num_vao = 2;
-	num_vbo = 5;
+	num_vao = 3;
+	num_vbo = 3;
 	num_eab = 1;
 	vao = new GLuint[num_vao];
 	vbo = new GLuint[num_vbo];
@@ -31,6 +31,8 @@ void View::initBuffersGL() {
 	glGenVertexArrays(num_vao, vao);
 	glGenBuffers(num_vbo, vbo);
 	glGenBuffers(num_eab, veo);
+
+	glEnable(GL_PROGRAM_POINT_SIZE);
 }
 
 void View::calcStageTransformations() {
@@ -89,8 +91,6 @@ void View::calcStageTransformations() {
 		y'  = 	0.5 * (y+1) * (T - B) + B
 		z'  = 	0.5 * (z+1)
 	*/
-
-
 }
 
 void View::addViewFrustum() {
@@ -168,6 +168,25 @@ void View::addViewFrustum() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, frustum_indices.size() * sizeof(GLuint), &frustum_indices[0], GL_STATIC_DRAW);
 }
 
+void View::addEye() {
+	eye_point = glm::vec4(eye, 1.0);
+	eye_color = glm::vec4(1.0, 0.0, 0.0, 1.0);	// RED
+
+	GLuint buffer_len = sizeof(glm::vec4);
+
+	glBindVertexArray(vao[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(buffer_len));
+
+	glBufferData(GL_ARRAY_BUFFER, 2 * buffer_len, NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, buffer_len, &eye_point);
+	glBufferSubData(GL_ARRAY_BUFFER, buffer_len, buffer_len, &eye_color);
+}
+
 View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 	half_width = h_width;
 	half_height = h_height;
@@ -201,6 +220,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   	calcStageTransformations();
 
   	addViewFrustum();
+  	addEye();
 
   	updateCS(0);
 
@@ -263,6 +283,14 @@ void View::renderGL() {
 	glUniform1i(uToDCS, to_dcs);
 	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
 	glDrawElements(GL_LINES, frustum_indices.size(), GL_UNSIGNED_INT, 0);
+
+	glBindVertexArray(vao[2]);
+	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
+	glUniformMatrix4fv(uOrthoMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
+	glUniform1i(uPerspectiveDivide, perspective_divide);
+	glUniform1i(uToDCS, to_dcs);
+	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
+	glDrawArrays(GL_POINTS, 0, 1);
 }
 
 void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
@@ -353,9 +381,9 @@ void View::updateCS(int val) {
 			to_dcs = 0;
 			break;
 		case 4:
-			ortho_matrix = glm::ortho(-half_width, half_width,
-							  -half_height, half_height,
-							  -half_depth, half_depth);
+			ortho_matrix = glm::ortho(-half_width-50, half_width+50,
+							  -half_height-50, half_height+50,
+							  -half_depth-50, half_depth+50);
 			model_matrix = rotation_matrix * vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 1;
 			to_dcs = 1;

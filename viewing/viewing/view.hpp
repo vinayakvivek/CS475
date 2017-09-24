@@ -45,6 +45,9 @@ class View {
 	std::vector<glm::vec4> frustum_colors;
 	std::vector<GLuint> frustum_indices;
 
+	glm::vec4 eye_point;
+	glm::vec4 eye_color;
+
 	GLuint num_vao;
 	GLuint num_vbo;
 	GLuint num_eab;
@@ -86,9 +89,9 @@ class View {
 	void initShadersGL();
 	void initBuffersGL();
 	void addViewFrustum();
+	void addEye();
 
 	void calcStageTransformations();
-	void calcPointsNDCS();
 	void test();
 public:
 	View(GLfloat h_width, GLfloat h_height, GLfloat h_depth);
