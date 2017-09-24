@@ -423,32 +423,39 @@ GLuint outCode(const glm::vec4 &p) {
     return out_code;
 }
 
-std::vector<glm::vec4> clipWithPlane(int plane_id, std::vector<glm::vec4> poly) {
+void clipWithPlane(int plane_id, std::vector<glm::vec4> &poly, std::vector<glm::vec4> &colors) {
 	glm::vec4 plane = planes[plane_id];
-	// std::cout << glm::to_string(plane) << "\n";
+
 	std::vector<glm::vec4> new_poly;
+	std::vector<glm::vec4> new_colors;
 	int n = poly.size();
+	glm::vec4 p1, p2, c1, c2;
+
 	for (int i = 0; i < n; ++i) {
-		glm::vec4 p1 = poly[i], p2 = poly[(i+1)%n];
+		p1 = poly[i]; p2 = poly[(i+1)%n];
+		c1 = colors[i]; c2 = colors[(i+1)%n];
+
 		GLfloat a1, a2, alpha;
 		a1 = dot(p1, plane);
 		a2 = dot(p2, plane);
 
-		// std::cout << i << " " << glm::to_string(p1) << " " << glm::to_string(p2) << " : " << a1 << ", " << a2 << "\n";
-
 		if (a1 == a2)
-			return new_poly;
+			return;
 
 		alpha = a1 / (a1 - a2);
 		glm::vec4 pi = p1 * (1 - alpha) + p2 * alpha;
 
 		if (a1 > 0 && a2 > 0) {
 			new_poly.push_back(p2);
+			new_colors.push_back(c2);
 		} else if (a1 > 0 && a2 < 0) {
 			new_poly.push_back(pi);
+			new_colors.push_back(c2);
 		} else if (a1 < 0 && a2 > 0) {
 			new_poly.push_back(pi);
 			new_poly.push_back(p2);
+			new_colors.push_back(c1);
+			new_colors.push_back(c2);
 		}
 	}
 
@@ -457,9 +464,8 @@ std::vector<glm::vec4> clipWithPlane(int plane_id, std::vector<glm::vec4> poly) 
 	// 	std::cout << glm::to_string(p) << "\n";
 	// }
 	// std::cout << "\n";
-
-
-	return new_poly;
+	poly = new_poly;
+	colors = new_colors;
 }
 
 void View::clip() {
@@ -476,8 +482,9 @@ void View::clip() {
 	std::cout << "\n";
 
 	std::vector<glm::vec4> new_poly({matrix * points[0], matrix * points[1], matrix * points[2]});
+	std::vector<glm::vec4> new_colors({colors[0], colors[1], colors[2]});
 	for (int i = 0; i < 6; ++i) {
-		new_poly = clipWithPlane(i, new_poly);
+		clipWithPlane(i, new_poly, new_colors);
 	}
 
 	for (int i = 0; i < new_poly.size(); ++i) {
@@ -485,7 +492,6 @@ void View::clip() {
 	}
 
 	std::vector<glm::vec4> new_points;
-	glm::vec4 c(1.0, 1.0, 1.0, 1.0);
 	std::vector<glm::vec4> colors;
 	int n = new_poly.size();
 	for (int i = 0; i < n - 2; ++i) {
@@ -493,15 +499,18 @@ void View::clip() {
 		new_points.push_back(new_poly[(i+1)%n]);
 		new_points.push_back(new_poly[(i+2)%n]);
 
-		colors.push_back(c);
-		colors.push_back(c);
-		colors.push_back(c);
+		colors.push_back(new_colors[0]);
+		colors.push_back(new_colors[(i+1)%n]);
+		colors.push_back(new_colors[(i+2)%n]);
 	}
 
 	for (int i = 0; i < new_points.size(); ++i) {
 		std::cout << glm::to_string(new_points[i]) << "\n";
 	}
 	std::cout << "\n\n";
+
+	// clipped_points;
+	// clipped_colors;
 
 	glBindVertexArray(vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
