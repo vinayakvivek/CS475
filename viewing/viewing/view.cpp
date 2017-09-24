@@ -459,11 +459,6 @@ void clipWithPlane(int plane_id, std::vector<glm::vec4> &poly, std::vector<glm::
 		}
 	}
 
-	// std::cout << "plane : " << plane_id << "\n";
-	// for (glm::vec4 p : new_poly) {
-	// 	std::cout << glm::to_string(p) << "\n";
-	// }
-	// std::cout << "\n";
 	poly = new_poly;
 	colors = new_colors;
 }
@@ -476,46 +471,46 @@ void View::clip() {
 	glm::mat4 matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 	glm::mat4 inv = glm::inverse(matrix);
 
-	for (int i = 0; i < 3; ++i) {
-		std::cout << glm::to_string(points[i]) << "\n";
+	int num_traingles = num_points / 3;
+
+	for (int k = 0; k < num_traingles; ++k) {
+
+		int p1 = 3*k;
+		int p2 = p1 + 1;
+		int p3 = p1 + 2;
+
+		std::vector<glm::vec4> new_poly({matrix * points[p1], matrix * points[p2], matrix * points[p3]});
+		std::vector<glm::vec4> new_colors({colors[p1], colors[p2], colors[p3]});
+
+		for (int i = 0; i < 6; ++i) {
+			clipWithPlane(i, new_poly, new_colors);
+		}
+
+		for (int i = 0; i < new_poly.size(); ++i) {
+			new_poly[i] = inv * new_poly[i];
+		}
+
+		std::vector<glm::vec4> new_points;
+		std::vector<glm::vec4> colors;
+		int n = new_poly.size();
+		for (int i = 0; i < n - 2; ++i) {
+			new_points.push_back(new_poly[0]);
+			new_points.push_back(new_poly[(i+1)%n]);
+			new_points.push_back(new_poly[(i+2)%n]);
+
+			colors.push_back(new_colors[0]);
+			colors.push_back(new_colors[(i+1)%n]);
+			colors.push_back(new_colors[(i+2)%n]);
+		}
+
+		clipped_points.insert(clipped_points.end(), new_points.begin(), new_points.end());
+		clipped_colors.insert(clipped_colors.end(), colors.begin(), colors.end());
 	}
-	std::cout << "\n";
-
-	std::vector<glm::vec4> new_poly({matrix * points[0], matrix * points[1], matrix * points[2]});
-	std::vector<glm::vec4> new_colors({colors[0], colors[1], colors[2]});
-	for (int i = 0; i < 6; ++i) {
-		clipWithPlane(i, new_poly, new_colors);
-	}
-
-	for (int i = 0; i < new_poly.size(); ++i) {
-		new_poly[i] = inv * new_poly[i];
-	}
-
-	std::vector<glm::vec4> new_points;
-	std::vector<glm::vec4> colors;
-	int n = new_poly.size();
-	for (int i = 0; i < n - 2; ++i) {
-		new_points.push_back(new_poly[0]);
-		new_points.push_back(new_poly[(i+1)%n]);
-		new_points.push_back(new_poly[(i+2)%n]);
-
-		colors.push_back(new_colors[0]);
-		colors.push_back(new_colors[(i+1)%n]);
-		colors.push_back(new_colors[(i+2)%n]);
-	}
-
-	for (int i = 0; i < new_points.size(); ++i) {
-		std::cout << glm::to_string(new_points[i]) << "\n";
-	}
-	std::cout << "\n\n";
-
-	// clipped_points;
-	// clipped_colors;
 
 	glBindVertexArray(vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
-	GLuint buffer_length = new_points.size() * 4 * sizeof(GLfloat);
+	GLuint buffer_length = clipped_points.size() * 4 * sizeof(GLfloat);
 
 	glEnableVertexAttribArray(vPosition);
 	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -523,11 +518,11 @@ void View::clip() {
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(buffer_length));
 
 	glBufferData(GL_ARRAY_BUFFER, buffer_length + buffer_length, NULL, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, buffer_length, &new_points[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, buffer_length, buffer_length, &colors[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, buffer_length, &clipped_points[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, buffer_length, buffer_length, &clipped_colors[0]);
 
 	clipped = true;
-	num_points = new_points.size();
+	num_points = clipped_points.size();
 }
 
 void View::unClip() {
@@ -550,5 +545,7 @@ void View::unClip() {
 	glBufferSubData(GL_ARRAY_BUFFER, points_buffer_length, colors_buffer_length, &colors[0]);
 
 	clipped = false;
+	clipped_points.resize(0);
+	clipped_colors.resize(0);
 	num_points = points.size();
 }
