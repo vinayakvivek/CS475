@@ -16,7 +16,7 @@ void View::initBuffersGL() {
 	vPosition = glGetAttribLocation(shaderProgram, "vPosition");
 	vColor = glGetAttribLocation(shaderProgram, "vColor");
 	uModelMatrix = glGetUniformLocation(shaderProgram, "uModelMatrix");
-	uOrthoMatrix = glGetUniformLocation(shaderProgram, "uOrthoMatrix");
+	uViewMatrix = glGetUniformLocation(shaderProgram, "uViewMatrix");
 	uPerspectiveDivide = glGetUniformLocation(shaderProgram, "uPerspectiveDivide");
 	uWindowLimits = glGetUniformLocation(shaderProgram, "uWindowLimits");
 	uToDCS = glGetUniformLocation(shaderProgram, "uToDCS");
@@ -197,7 +197,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth,
 	yrot = 0.0;
 	zrot = 0.0;
 	rotation_matrix = glm::mat4(1.0f);
-	ortho_matrix = glm::mat4(1.0f);
+	view_matrix = glm::mat4(1.0f);
 	model_matrix = glm::mat4(1.0f);
 
 	window_limits = glm::vec4(half_width, -half_width, half_height, -half_height);
@@ -257,7 +257,7 @@ void View::renderGL() {
 
 	glBindVertexArray(vao[0]);
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
-	glUniformMatrix4fv(uOrthoMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
+	glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 	glUniform1i(uPerspectiveDivide, perspective_divide);
 	glUniform1i(uToDCS, to_dcs);
 	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
@@ -265,7 +265,7 @@ void View::renderGL() {
 
 	glBindVertexArray(vao[1]);
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
-	glUniformMatrix4fv(uOrthoMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
+	glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 	glUniform1i(uPerspectiveDivide, perspective_divide);
 	glUniform1i(uToDCS, to_dcs);
 	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
@@ -273,7 +273,7 @@ void View::renderGL() {
 
 	glBindVertexArray(vao[2]);
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
-	glUniformMatrix4fv(uOrthoMatrix, 1, GL_FALSE, glm::value_ptr(ortho_matrix));
+	glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 	glUniform1i(uPerspectiveDivide, perspective_divide);
 	glUniform1i(uToDCS, to_dcs);
 	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
@@ -348,7 +348,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-			ortho_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * rotation_matrix;
 			model_matrix = glm::mat4(1.0f);
 			perspective_divide = 0;
 			to_dcs = 0;
@@ -358,7 +358,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-			ortho_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * rotation_matrix;
 			model_matrix = wcs_to_vcs_matrix;
 			perspective_divide = 0;
 			to_dcs = 0;
@@ -367,7 +367,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-2.0, 2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
-			ortho_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * rotation_matrix;
 			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 0;
 			to_dcs = 0;
@@ -376,7 +376,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-2.0, 2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
-			ortho_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * rotation_matrix;
 			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 1;
 			to_dcs = 0;
@@ -385,7 +385,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width-50, half_width+50,
 							  -half_height-50, half_height+50,
 							  -half_depth-50, half_depth+50);
-			ortho_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * rotation_matrix;
 			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 1;
 			to_dcs = 1;

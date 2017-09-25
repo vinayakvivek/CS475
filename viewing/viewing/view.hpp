@@ -60,7 +60,7 @@ class View {
 
 	// shader variables
 	GLint vPosition, vColor;
-	GLint uModelMatrix, uOrthoMatrix;
+	GLint uModelMatrix, uViewMatrix;
 	GLint uPerspectiveDivide;
 	GLint uWindowLimits;		// (R, L, T, B)
 	GLint uToDCS;
@@ -68,12 +68,14 @@ class View {
 	// transformation matrices
 	glm::mat4 ortho_matrix;
 	glm::mat4 rotation_matrix;
+	glm::mat4 model_matrix, view_matrix;
+
 	GLfloat xrot, yrot, zrot;
-	glm::mat4 model_matrix;
 	GLuint perspective_divide;
 	GLuint to_dcs;
 	glm::vec4 window_limits;
 
+	// coordinate transformation matrices
 	glm::mat4 wcs_to_vcs_matrix;
 	glm::mat4 vcs_to_wcs_matrix;
 

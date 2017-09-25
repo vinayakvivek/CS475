@@ -3,7 +3,7 @@
 in vec4 vPosition;
 in vec4 vColor;
 uniform mat4 uModelMatrix;
-uniform mat4 uOrthoMatrix;
+uniform mat4 uViewMatrix;
 uniform int uPerspectiveDivide;
 uniform vec4 uWindowLimits;		// (R, L, T, B)
 uniform int uToDCS;
@@ -30,7 +30,7 @@ void main () {
 		v = vec4(x, y, z, 1.0);
 	}
 
-	v = uOrthoMatrix * v;
+	v = uViewMatrix * v;
 	gl_Position = v;
 	gl_PointSize = 10.0;
 	color = vColor;
