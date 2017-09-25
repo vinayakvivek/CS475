@@ -95,6 +95,8 @@ class View {
 	void addViewFrustum();
 	void addEye();
 
+	void populateClippedPoints(int);
+
 	void calcStageTransformations();
 	void test();
 public:

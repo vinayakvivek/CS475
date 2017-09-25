@@ -243,25 +243,13 @@ void View::addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t) {
 	m->setTranslationMatrix(t.x, t.y, t.z);
 	std::vector<glm::vec4> *t_points = m->getTransformedPoints();
 
+	int old_num_points = points.size();
+
 	points.insert(points.end(), t_points->begin(), t_points->end());
 	colors.insert(colors.end(), m->getColors().begin(), m->getColors().end());
 
-	GLuint points_buffer_length = points.size() * 4 * sizeof(GLfloat);
-	GLuint colors_buffer_length = colors.size() * 4 * sizeof(GLfloat);
-
-	glBindVertexArray(vao[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-
-	glEnableVertexAttribArray(vPosition);
-	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-	glEnableVertexAttribArray(vColor);
-	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points_buffer_length));
-
-	glBufferData(GL_ARRAY_BUFFER, points_buffer_length + colors_buffer_length, NULL, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, points_buffer_length, &points[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, points_buffer_length, colors_buffer_length, &colors[0]);
-
-	num_points = points.size();
+	populateClippedPoints(old_num_points);
+	unClip();
 }
 
 void View::renderGL() {
@@ -463,19 +451,15 @@ void clipWithPlane(int plane_id, std::vector<glm::vec4> &poly, std::vector<glm::
 	colors = new_colors;
 }
 
-void View::clip() {
-
-	if (clipped)
-		return;
-
+void View::populateClippedPoints(int offset) {
 	glm::mat4 matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 	glm::mat4 inv = glm::inverse(matrix);
 
-	int num_traingles = num_points / 3;
+	int num_traingles =  (points.size() - offset) / 3;
 
 	for (int k = 0; k < num_traingles; ++k) {
 
-		int p1 = 3*k;
+		int p1 = offset + 3*k;
 		int p2 = p1 + 1;
 		int p3 = p1 + 2;
 
@@ -506,7 +490,9 @@ void View::clip() {
 		clipped_points.insert(clipped_points.end(), new_points.begin(), new_points.end());
 		clipped_colors.insert(clipped_colors.end(), colors.begin(), colors.end());
 	}
+}
 
+void View::clip() {
 	glBindVertexArray(vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
@@ -526,9 +512,6 @@ void View::clip() {
 }
 
 void View::unClip() {
-	if (!clipped)
-		return;
-
 	GLuint points_buffer_length = points.size() * 4 * sizeof(GLfloat);
 	GLuint colors_buffer_length = colors.size() * 4 * sizeof(GLfloat);
 
@@ -545,7 +528,5 @@ void View::unClip() {
 	glBufferSubData(GL_ARRAY_BUFFER, points_buffer_length, colors_buffer_length, &colors[0]);
 
 	clipped = false;
-	clipped_points.resize(0);
-	clipped_colors.resize(0);
 	num_points = points.size();
 }
