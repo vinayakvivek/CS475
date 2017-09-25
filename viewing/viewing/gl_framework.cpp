@@ -99,8 +99,16 @@ namespace viewing
 				v->clip();
 				break;
 
-			case GLFW_KEY_X:
+			case GLFW_KEY_V:
 				v->unClip();
+				break;
+
+			case GLFW_KEY_Z:
+				v->updateScaleMatrix(0.05);
+				break;
+
+			case GLFW_KEY_X:
+				v->updateScaleMatrix(-0.05);
 				break;
 		}
 	}

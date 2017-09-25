@@ -68,9 +68,11 @@ class View {
 	// transformation matrices
 	glm::mat4 ortho_matrix;
 	glm::mat4 rotation_matrix;
+	glm::mat4 scale_matrix;
 	glm::mat4 model_matrix, view_matrix;
 
 	GLfloat xrot, yrot, zrot;
+	GLfloat scale;
 	GLuint perspective_divide;
 	GLuint to_dcs;
 	glm::vec4 window_limits;
@@ -108,6 +110,7 @@ public:
 	void renderGL();
 
 	void updateRotationMatrix(GLuint axis, GLfloat angle);
+	void updateScaleMatrix(GLfloat ds);
 	void updateCS(int val);
 	void clip();
 	void unClip();

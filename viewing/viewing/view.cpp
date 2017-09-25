@@ -196,9 +196,11 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth,
 	xrot = 0.0;
 	yrot = 0.0;
 	zrot = 0.0;
+	scale = 1.0;
 	rotation_matrix = glm::mat4(1.0f);
 	view_matrix = glm::mat4(1.0f);
 	model_matrix = glm::mat4(1.0f);
+	scale_matrix = glm::mat4(1.0f);
 
 	window_limits = glm::vec4(half_width, -half_width, half_height, -half_height);
 
@@ -281,35 +283,6 @@ void View::renderGL() {
 }
 
 void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
-	// angle = deg_to_rad(-angle);
-	// GLfloat sina = sin(angle), cosa = cos(angle);
-	// glm::mat4 rot = glm::mat4(1.0f);
-	// switch (axis) {
-	// 	case 0:
-	// 		// x-axis rotation
-	// 		rot = glm::mat4(1.0, 0.0, 0.0, 0.0,
-	// 	                   0.0, cosa, -sina, 0.0,
-	// 	                   0.0, sina, cosa, 0.0,
-	// 	                   0.0, 0.0, 0.0, 1.0);
-	// 		break;
-
-	// 	case 1:
-	// 		rot = glm::mat4(cosa, 0.0, sina, 0.0,
- //                           0.0, 1.0, 0.0, 0.0,
- //                           -sina, 0.0, cosa, 0.0,
- //                           0.0, 0.0, 0.0, 1.0);
-	// 		break;
-
-	// 	case 2:
-	// 		rot = glm::mat4(cosa, -sina, 0.0, 0.0,
- //                           sina, cosa, 0.0, 0.0,
- //                           0.0, 0.0, 1.0, 0.0,
- //                           0.0, 0.0, 0.0, 1.0);
-	// 		break;
-	// }
-
-	// rotation_matrix = rot * rotation_matrix;
-
 	angle = deg_to_rad(angle);
 	switch (axis) {
 		case 0:
@@ -324,10 +297,18 @@ void View::updateRotationMatrix(GLuint axis, GLfloat angle) {
 			break;
 	}
 
-
 	rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
 	rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
+	updateCS(CS);
+}
+
+void View::updateScaleMatrix(GLfloat ds) {
+	scale += ds;
+	scale_matrix = glm::mat4(scale, 0.0, 0.0, 0.0,
+							 0.0, scale, 0.0, 0.0,
+							 0.0, 0.0, scale, 0.0,
+							 0.0, 0.0, 0.0, 1.0);
 	updateCS(CS);
 }
 
@@ -336,10 +317,15 @@ void View::updateCS(int val) {
 		xrot = 0.0;
 		yrot = (val != 0 && val != 1) ? PI : 0.0;
 		zrot = 0.0;
+		scale = 1.0;
 		CS = val;
 		rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f,0.0f,0.0f));
 		rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f,1.0f,0.0f));
 		rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f,0.0f,1.0f));
+		scale_matrix = glm::mat4(scale, 0.0, 0.0, 0.0,
+							 	 0.0, scale, 0.0, 0.0,
+							 	 0.0, 0.0, scale, 0.0,
+							 	 0.0, 0.0, 0.0, 1.0);
 	}
 
 	switch (CS) {
@@ -348,7 +334,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-			view_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * scale_matrix * rotation_matrix;
 			model_matrix = glm::mat4(1.0f);
 			perspective_divide = 0;
 			to_dcs = 0;
@@ -358,7 +344,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width, half_width,
 							  -half_height, half_height,
 							  -half_depth, half_depth);
-			view_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * scale_matrix * rotation_matrix;
 			model_matrix = wcs_to_vcs_matrix;
 			perspective_divide = 0;
 			to_dcs = 0;
@@ -367,7 +353,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-2.0, 2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
-			view_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * scale_matrix * rotation_matrix;
 			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 0;
 			to_dcs = 0;
@@ -376,7 +362,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-2.0, 2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
-			view_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * scale_matrix * rotation_matrix;
 			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 1;
 			to_dcs = 0;
@@ -385,7 +371,7 @@ void View::updateCS(int val) {
 			ortho_matrix = glm::ortho(-half_width-50, half_width+50,
 							  -half_height-50, half_height+50,
 							  -half_depth-50, half_depth+50);
-			view_matrix = ortho_matrix * rotation_matrix;
+			view_matrix = ortho_matrix * scale_matrix * rotation_matrix;
 			model_matrix = vcs_to_ccs_matrix * wcs_to_vcs_matrix;
 			perspective_divide = 1;
 			to_dcs = 1;
