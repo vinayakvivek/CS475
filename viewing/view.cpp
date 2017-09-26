@@ -90,6 +90,8 @@ void View::calcStageTransformations() {
 		x'  = 	0.5 * (x+1) * (R - L) + L
 		y'  = 	0.5 * (y+1) * (T - B) + B
 		z'  = 	0.5 * (z+1)
+
+		this transformation in done in shader (if toDCS is set) after perspective divide
 	*/
 }
 
