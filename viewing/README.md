@@ -23,3 +23,8 @@
 -	`UP`, `DOWN` : rotate about Y-axis
 -	`LEFT`, `RIGHT` : rotate about X-axis
 -	`PAGE UP`, `PAGE DOWN` : rotate about Z-axis
+
+### Screenshots
+-	World Coordinate System (WCS)  
+	<img src="screenshots/WCS-1.png" width="400">
+	<img src="screenshots/WCS-2.png" width="400">
