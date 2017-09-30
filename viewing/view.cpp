@@ -66,7 +66,6 @@ void View::calcStageTransformations() {
 	vcs_to_wcs_matrix = trans * rot;
 	wcs_to_vcs_matrix = glm::inverse(vcs_to_wcs_matrix);
 
-
 	/*
 		VCS to CCS
 
@@ -352,7 +351,8 @@ void View::updateCS(int val) {
 			to_dcs = 0;
 			break;
 		case 2:
-			ortho_matrix = glm::ortho(-2.0, 2.0,
+			// CCS
+			ortho_matrix = glm::ortho(2.0, -2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
 			view_matrix = ortho_matrix * scale_matrix * rotation_matrix;
@@ -361,7 +361,8 @@ void View::updateCS(int val) {
 			to_dcs = 0;
 			break;
 		case 3:
-			ortho_matrix = glm::ortho(-2.0, 2.0,
+			// NDCS
+			ortho_matrix = glm::ortho(2.0, -2.0,
 							  -2.0, 2.0,
 							  -2.0, 2.0);
 			view_matrix = ortho_matrix * scale_matrix * rotation_matrix;
@@ -370,7 +371,8 @@ void View::updateCS(int val) {
 			to_dcs = 0;
 			break;
 		case 4:
-			ortho_matrix = glm::ortho(-half_width-50, half_width+50,
+			// NDCS
+			ortho_matrix = glm::ortho(half_width+50, -half_width-50,
 							  -half_height-50, half_height+50,
 							  -half_depth-50, half_depth+50);
 			view_matrix = ortho_matrix * scale_matrix * rotation_matrix;
