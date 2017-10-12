@@ -11,13 +11,16 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   initBuffersGL();
 
   c_xrot = 0.0; c_yrot = 0.0; c_zrot = 0.0;
-  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 2.0;
+  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 200.0;
   c_up_x = 0.0; c_up_y = 1.0; c_up_z = 0.0;
+
+  xrot = 0.0; yrot = 0.0; zrot = 0.0;
 
   ortho_matrix = glm::ortho(-half_width, half_width,
                             -half_height, half_height,
                             -half_depth, half_depth);
   model_matrix = glm::mat4(1.0f);
+  rotation_matrix = glm::mat4(1.0f);
   normal_matrix = glm::mat4(1.0f);
   cam_rotation_matrix = glm::mat4(1.0f);
   updateCameraView();
@@ -39,6 +42,7 @@ void View::initBuffersGL() {
   v_position = glGetAttribLocation(shaderProgram, "vPosition");
   v_color = glGetAttribLocation(shaderProgram, "vColor");
   v_normal = glGetAttribLocation(shaderProgram, "vNormal");
+  v_tex = glGetAttribLocation(shaderProgram, "vTex");
   u_model_matrix = glGetUniformLocation(shaderProgram, "uModelMatrix");
   u_view_matrix = glGetUniformLocation(shaderProgram, "uViewMatrix");
   u_normal_matrix = glGetUniformLocation(shaderProgram, "uNormalMatrix");
@@ -47,6 +51,10 @@ void View::initBuffersGL() {
   num_vbo = 1;
   vao = new GLuint[num_vao];
   vbo = new GLuint[num_vbo];
+
+  // Load Textures
+  tex = LoadTexture("../images/all1.bmp", 256, 256);
+  glBindTexture(GL_TEXTURE_2D, tex);
 
   glGenVertexArrays(num_vao, vao);
   glGenBuffers(num_vbo, vbo);
@@ -97,6 +105,13 @@ void View::addSampleTriangle() {
   glBufferSubData(GL_ARRAY_BUFFER, buffer_len, buffer_len, &colors[0]);
 }
 
+glm::vec2 UV(GLfloat x, GLfloat y, GLfloat z) {
+  glm::vec3 n = glm::normalize(glm::vec3(x, y, z));
+  GLfloat u = atan2(n.x, n.z) / (2 * PI) + 0.5;
+  GLfloat v = n.y * 0.5 + 0.5;
+  return glm::vec2(u, v);
+}
+
 void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
   GLfloat slice_length = (PI / n_lats);
   GLfloat sector_length = (2 * PI / n_longs);
@@ -114,6 +129,7 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
+      texCoords.push_back(UV(x, y, z));
 
       theta += slice_length;
       x = r * cos(phi) * sin(theta);
@@ -121,6 +137,7 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
+      texCoords.push_back(UV(x, y, z));
 
       phi += sector_length;
       x = r * cos(phi) * sin(theta);
@@ -128,9 +145,11 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
+      texCoords.push_back(UV(x, y, z));
 
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
+      texCoords.push_back(UV(x, y, z));
 
       theta -= slice_length;
       x = r * cos(phi) * sin(theta);
@@ -138,6 +157,7 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
+      texCoords.push_back(UV(x, y, z));
 
       phi -= sector_length;
       x = r * cos(phi) * sin(theta);
@@ -145,10 +165,13 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
+      texCoords.push_back(UV(x, y, z));
     }
   }
 
-  GLuint buffer_len = points.size() * sizeof(glm::vec4);
+  GLuint points_buffer_len = points.size() * sizeof(glm::vec4);
+  GLuint normals_buffer_len = normals.size() * sizeof(glm::vec4);
+  GLuint texCoords_buffer_len = texCoords.size() * sizeof(glm::vec2);
 
   glBindVertexArray(vao[0]);
   glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
@@ -156,11 +179,14 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
   glEnableVertexAttribArray(v_position);
   glVertexAttribPointer(v_position, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
   glEnableVertexAttribArray(v_normal);
-  glVertexAttribPointer(v_normal, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(buffer_len));
+  glVertexAttribPointer(v_normal, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points_buffer_len));
+  glEnableVertexAttribArray(v_tex);
+  glVertexAttribPointer(v_tex, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points_buffer_len + normals_buffer_len));
 
-  glBufferData(GL_ARRAY_BUFFER, 2 * buffer_len, NULL, GL_STATIC_DRAW);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, buffer_len, &points[0]);
-  glBufferSubData(GL_ARRAY_BUFFER, buffer_len, buffer_len, &normals[0]);
+  glBufferData(GL_ARRAY_BUFFER, (points_buffer_len + normals_buffer_len + texCoords_buffer_len), NULL, GL_STATIC_DRAW);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, points_buffer_len, &points[0]);
+  glBufferSubData(GL_ARRAY_BUFFER, points_buffer_len, normals_buffer_len, &normals[0]);
+  glBufferSubData(GL_ARRAY_BUFFER, points_buffer_len + normals_buffer_len, texCoords_buffer_len, &texCoords[0]);
 }
 
 void View::rotateCamera(GLuint axis, GLfloat angle) {
@@ -183,6 +209,29 @@ void View::rotateCamera(GLuint axis, GLfloat angle) {
   cam_rotation_matrix = glm::rotate(cam_rotation_matrix, c_zrot, glm::vec3(0.0f, 0.0f, 1.0f));
 
   updateCameraView();
+}
+
+void View::rotate(GLuint axis, GLfloat angle) {
+  angle = deg_to_rad(angle);
+  switch (axis) {
+    case 0:
+      // x-axis rotation
+      xrot += angle;
+      break;
+    case 1:
+      yrot += angle;
+      break;
+    case 2:
+      zrot += angle;
+      break;
+  }
+
+  rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f, 0.0f, 0.0f));
+  rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f, 1.0f, 0.0f));
+  rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f, 0.0f, 1.0f));
+
+  model_matrix = rotation_matrix;
+  normal_matrix = glm::transpose(glm::inverse(model_matrix));
 }
 
 void View::updateCameraView() {

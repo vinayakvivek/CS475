@@ -16,7 +16,7 @@ namespace mynamespace {
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
     // Enable Gourard shading
-    glShadeModel(GL_SMOOTH);
+    // glShadeModel(GL_SMOOTH);
   }
 
   // !GLFW Error Callback
@@ -38,7 +38,7 @@ namespace mynamespace {
     }
 
     switch (key) {
-      // rotation
+      // rotate camera
       case GLFW_KEY_UP:
         v->rotateCamera(1, 1);
         break;
@@ -61,6 +61,32 @@ namespace mynamespace {
 
       case GLFW_KEY_PAGE_DOWN:
         v->rotateCamera(2, -1);
+        break;
+
+      // rotate models
+      // rotation
+      case GLFW_KEY_W:
+        v->rotate(1, 1);
+        break;
+
+      case GLFW_KEY_S:
+        v->rotate(1, -1);
+        break;
+
+      case GLFW_KEY_A:
+        v->rotate(0, 1);
+        break;
+
+      case GLFW_KEY_D:
+        v->rotate(0, -1);
+        break;
+
+      case GLFW_KEY_Q:
+        v->rotate(2, 1);
+        break;
+
+      case GLFW_KEY_E:
+        v->rotate(2, -1);
         break;
     }
   }

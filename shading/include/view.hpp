@@ -6,6 +6,7 @@
 
 #include "gl_framework.hpp"
 #include "shader_util.hpp"
+#include "texture_util.hpp"
 
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
@@ -29,21 +30,25 @@ class View {
   std::vector<glm::vec4> points;
   std::vector<glm::vec4> colors;
   std::vector<glm::vec4> normals;
+  std::vector<glm::vec2> texCoords;
 
   GLuint shaderProgram;
   GLuint *vbo, *vao;
   GLuint num_vao;
   GLuint num_vbo;
+  GLuint tex;
 
   GLuint v_position;
   GLuint v_color;
   GLuint v_normal;
+  GLuint v_tex;
   GLuint u_model_matrix;
   GLuint u_view_matrix;
   GLuint u_normal_matrix;
 
   glm::mat4 ortho_matrix;
   glm::mat4 model_matrix;
+  glm::mat4 rotation_matrix;
   glm::mat4 normal_matrix;
   glm::mat4 view_matrix;
   // glm::mat4 model_view_matrix;
@@ -52,6 +57,8 @@ class View {
   GLfloat c_xrot, c_yrot, c_zrot;
   GLfloat c_xpos, c_ypos, c_zpos;
   GLfloat c_up_x, c_up_y, c_up_z;
+
+  GLfloat xrot, yrot, zrot;
 
   void initShadersGL();
   void initBuffersGL();
@@ -63,6 +70,7 @@ class View {
   void addSampleTriangle();
   void addSphere(GLfloat r, GLuint n_lats = 50, GLuint n_longs = 50);
   void rotateCamera(GLuint axis, GLfloat angle);
+  void rotate(GLuint axis, GLfloat angle);
 };
 
 #endif  // VIEW_HPP_
