@@ -34,6 +34,9 @@ GLuint LoadTexture(const char *filename, int width, int height) {
 
   data = new unsigned char[size];
 
+  std::cout << "image :: width: " << w << ", height: " << h << std::endl;
+
+
   fread(data, size, 1, file);  // read the file
   fclose(file);
 

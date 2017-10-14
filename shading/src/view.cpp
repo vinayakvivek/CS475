@@ -21,6 +21,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
                             -half_depth, half_depth);
   model_matrix = glm::mat4(1.0f);
   rotation_matrix = glm::mat4(1.0f);
+  scale_matrix = glm::mat4(1.0f);
   normal_matrix = glm::mat4(1.0f);
   cam_rotation_matrix = glm::mat4(1.0f);
   updateCameraView();
@@ -43,6 +44,7 @@ void View::initBuffersGL() {
   v_color = glGetAttribLocation(shaderProgram, "vColor");
   v_normal = glGetAttribLocation(shaderProgram, "vNormal");
   v_tex = glGetAttribLocation(shaderProgram, "vTex");
+  v_tangent = glGetAttribLocation(shaderProgram, "vTangent");
   u_model_matrix = glGetUniformLocation(shaderProgram, "uModelMatrix");
   u_view_matrix = glGetUniformLocation(shaderProgram, "uViewMatrix");
   u_normal_matrix = glGetUniformLocation(shaderProgram, "uNormalMatrix");
@@ -54,7 +56,19 @@ void View::initBuffersGL() {
 
   // Load Textures
   tex = LoadTexture("../images/all1.bmp", 256, 256);
+  nmap = LoadTexture("../images/NormalMap.bmp", 512, 512);
+  // tex = LoadTexture("../images/buzz/face_mask.bmp", 436, 591);
+
+  // glBindTexture(GL_TEXTURE_2D, tex);
+
+  glActiveTexture(GL_TEXTURE0 + 0);
   glBindTexture(GL_TEXTURE_2D, tex);
+  glUniform1i(glGetUniformLocation(shaderProgram, "textureSampler"), 0);
+
+  glActiveTexture(GL_TEXTURE0 + 1);
+  glBindTexture(GL_TEXTURE_2D, nmap);
+  glUniform1i(glGetUniformLocation(shaderProgram, "normalMapSampler"), 1);
+
 
   glGenVertexArrays(num_vao, vao);
   glGenBuffers(num_vbo, vbo);
@@ -107,9 +121,23 @@ void View::addSampleTriangle() {
 
 glm::vec2 UV(GLfloat x, GLfloat y, GLfloat z) {
   glm::vec3 n = glm::normalize(glm::vec3(x, y, z));
-  GLfloat u = atan2(n.x, n.z) / (2 * PI) + 0.5;
+  GLfloat u = atan2(n.x, n.z) / (PI) + 0.5;
   GLfloat v = n.y * 0.5 + 0.5;
+
+  // if (z < 40) {
+  //   u = v = -1;
+  // }
+
   return glm::vec2(u, v);
+}
+
+glm::vec3 getTangent(GLfloat theta, GLfloat phi) {
+  theta -= PI/2;
+  phi += PI;
+  return glm::normalize(glm::vec3(
+      cos(phi) * sin(theta),
+      sin(phi) * sin(theta),
+      cos(theta)));
 }
 
 void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
@@ -118,6 +146,9 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
 
   GLfloat theta, phi, x, y, z;
   points.resize(0);
+  normals.resize(0);
+  texCoords.resize(0);
+  tangents.resize(0);
 
   for (int i = 0; i < n_lats; ++i) {
     for (int j = 0; j < n_longs; ++j) {
@@ -129,7 +160,9 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
-      texCoords.push_back(UV(x, y, z));
+      // texCoords.push_back(UV(x, y, z));
+      texCoords.push_back(glm::vec2(theta / PI, phi / (2 * PI)));
+      tangents.push_back(getTangent(theta, phi));
 
       theta += slice_length;
       x = r * cos(phi) * sin(theta);
@@ -137,7 +170,9 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
-      texCoords.push_back(UV(x, y, z));
+      texCoords.push_back(glm::vec2(theta / PI, phi / (2 * PI)));
+      tangents.push_back(getTangent(theta, phi));
+      // texCoords.push_back(UV(x, y, z));
 
       phi += sector_length;
       x = r * cos(phi) * sin(theta);
@@ -145,11 +180,15 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
-      texCoords.push_back(UV(x, y, z));
+      texCoords.push_back(glm::vec2(theta / PI, phi / (2 * PI)));
+      tangents.push_back(getTangent(theta, phi));
+      // texCoords.push_back(UV(x, y, z));
 
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
-      texCoords.push_back(UV(x, y, z));
+      texCoords.push_back(glm::vec2(theta / PI, phi / (2 * PI)));
+      tangents.push_back(getTangent(theta, phi));
+      // texCoords.push_back(UV(x, y, z));
 
       theta -= slice_length;
       x = r * cos(phi) * sin(theta);
@@ -157,7 +196,9 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
-      texCoords.push_back(UV(x, y, z));
+      texCoords.push_back(glm::vec2(theta / PI, phi / (2 * PI)));
+      tangents.push_back(getTangent(theta, phi));
+      // texCoords.push_back(UV(x, y, z));
 
       phi -= sector_length;
       x = r * cos(phi) * sin(theta);
@@ -165,13 +206,19 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
       z = r * cos(theta);
       points.push_back(glm::vec4(x, y, z, 1.0));
       normals.push_back(glm::vec4(x, y, z, 0.0));
-      texCoords.push_back(UV(x, y, z));
+      texCoords.push_back(glm::vec2(theta / PI, phi / (2 * PI)));
+      tangents.push_back(getTangent(theta, phi));
+      // texCoords.push_back(UV(x, y, z));
     }
   }
+
+  // scale_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.5, 1.0));
+  // model_matrix = scale_matrix;
 
   GLuint points_buffer_len = points.size() * sizeof(glm::vec4);
   GLuint normals_buffer_len = normals.size() * sizeof(glm::vec4);
   GLuint texCoords_buffer_len = texCoords.size() * sizeof(glm::vec2);
+  GLuint tangets_buffer_len = tangents.size() * sizeof(glm::vec3);
 
   glBindVertexArray(vao[0]);
   glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
@@ -182,11 +229,15 @@ void View::addSphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
   glVertexAttribPointer(v_normal, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points_buffer_len));
   glEnableVertexAttribArray(v_tex);
   glVertexAttribPointer(v_tex, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points_buffer_len + normals_buffer_len));
+  glEnableVertexAttribArray(v_tangent);
+  glVertexAttribPointer(v_tangent, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points_buffer_len + normals_buffer_len + texCoords_buffer_len));
 
-  glBufferData(GL_ARRAY_BUFFER, (points_buffer_len + normals_buffer_len + texCoords_buffer_len), NULL, GL_STATIC_DRAW);
+
+  glBufferData(GL_ARRAY_BUFFER, (points_buffer_len + normals_buffer_len + texCoords_buffer_len + tangets_buffer_len), NULL, GL_STATIC_DRAW);
   glBufferSubData(GL_ARRAY_BUFFER, 0, points_buffer_len, &points[0]);
   glBufferSubData(GL_ARRAY_BUFFER, points_buffer_len, normals_buffer_len, &normals[0]);
   glBufferSubData(GL_ARRAY_BUFFER, points_buffer_len + normals_buffer_len, texCoords_buffer_len, &texCoords[0]);
+  glBufferSubData(GL_ARRAY_BUFFER, points_buffer_len + normals_buffer_len + texCoords_buffer_len, tangets_buffer_len, &tangents[0]);
 }
 
 void View::rotateCamera(GLuint axis, GLfloat angle) {
@@ -230,7 +281,7 @@ void View::rotate(GLuint axis, GLfloat angle) {
   rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f, 1.0f, 0.0f));
   rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f, 0.0f, 1.0f));
 
-  model_matrix = rotation_matrix;
+  model_matrix =  rotation_matrix * scale_matrix;
   normal_matrix = glm::transpose(glm::inverse(model_matrix));
 }
 

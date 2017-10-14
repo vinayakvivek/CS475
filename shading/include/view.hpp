@@ -30,6 +30,7 @@ class View {
   std::vector<glm::vec4> points;
   std::vector<glm::vec4> colors;
   std::vector<glm::vec4> normals;
+  std::vector<glm::vec3> tangents;
   std::vector<glm::vec2> texCoords;
 
   GLuint shaderProgram;
@@ -37,11 +38,13 @@ class View {
   GLuint num_vao;
   GLuint num_vbo;
   GLuint tex;
+  GLuint nmap;
 
   GLuint v_position;
   GLuint v_color;
   GLuint v_normal;
   GLuint v_tex;
+  GLuint v_tangent;
   GLuint u_model_matrix;
   GLuint u_view_matrix;
   GLuint u_normal_matrix;
@@ -49,6 +52,7 @@ class View {
   glm::mat4 ortho_matrix;
   glm::mat4 model_matrix;
   glm::mat4 rotation_matrix;
+  glm::mat4 scale_matrix;
   glm::mat4 normal_matrix;
   glm::mat4 view_matrix;
   // glm::mat4 model_view_matrix;
