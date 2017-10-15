@@ -2,25 +2,24 @@
 
 Node::Node(
     std::string name,
-    const GLuint &tex,
+    // const GLuint &tex,
     const GLuint &shaderProgram,
-    VertexData *data,
+    // VertexData *data,
     Node *parent) {
   this->name = name;
-  this->tex = tex;
-  glGenVertexArrays(1, &this->vao);
-  glGenBuffers(1, &this->vbo);
 
-  num_vertices = data->num_vertices;
-  vertices = data->vertices;
-  colors = data->colors;
-  tex_coords = data->tex_coords;
-  normals = data->normals;
+  this->shaderProgram = shaderProgram;
 
-  this->vertex_buffer_size = num_vertices * sizeof(glm::vec4);
-  this->color_buffer_size = num_vertices * sizeof(glm::vec4);
-  this->tex_coord_buffer_size = num_vertices * sizeof(glm::vec2);
-  this->normal_buffer_size = num_vertices * sizeof(glm::vec4);
+  this->parent = parent;
+  // populateBuffers();
+  children.resize(0);
+}
+
+void Node::populateBuffers() {
+  vertex_buffer_size = data->num_vertices * sizeof(glm::vec4);
+  color_buffer_size = data->num_vertices * sizeof(glm::vec4);
+  tex_coord_buffer_size = data->num_vertices * sizeof(glm::vec2);
+  normal_buffer_size = data->num_vertices * sizeof(glm::vec4);
 
   v_position = glGetAttribLocation(shaderProgram, "vPosition");
   v_color = glGetAttribLocation(shaderProgram, "vColor");
@@ -28,25 +27,16 @@ Node::Node(
   v_normal = glGetAttribLocation(shaderProgram, "vNormal");
   u_model_matrix = glGetUniformLocation(shaderProgram, "uModelMatrix");
   u_normal_matrix = glGetUniformLocation(shaderProgram, "uNormalMatrix");
-
   u_texture_sampler = glGetUniformLocation(shaderProgram, "textureSampler");
 
   model_matrix = glm::mat4(1.0f);
   normal_matrix = glm::mat4(1.0f);
 
-  this->parent = parent;
-  populateBuffers();
-  children.resize(0);
-}
+  glGenVertexArrays(1, &this->vao);
+  glGenBuffers(1, &this->vbo);
 
-void Node::populateBuffers() {
   glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-  // bind texture
-  glActiveTexture(GL_TEXTURE0 + 0);
-  glBindTexture(GL_TEXTURE_2D, tex);
-  glUniform1i(u_texture_sampler, 0);
 
   glEnableVertexAttribArray(v_position);
   glVertexAttribPointer(v_position, 4, GL_FLOAT, GL_FALSE, 0,
@@ -72,19 +62,19 @@ void Node::populateBuffers() {
   glBufferSubData(GL_ARRAY_BUFFER,
                   0,
                   vertex_buffer_size,
-                  vertices);
+                  data->vertices);
   glBufferSubData(GL_ARRAY_BUFFER,
                   vertex_buffer_size,
                   color_buffer_size,
-                  colors);
+                  data->colors);
   glBufferSubData(GL_ARRAY_BUFFER,
                   vertex_buffer_size + color_buffer_size,
                   tex_coord_buffer_size,
-                  tex_coords);
+                  data->tex_coords);
   glBufferSubData(GL_ARRAY_BUFFER,
                   vertex_buffer_size + color_buffer_size + tex_coord_buffer_size,
                   normal_buffer_size,
-                  normals);
+                  data->normals);
 }
 
 void Node::addChild(Node *node) {
@@ -102,9 +92,15 @@ void Node::updateModelMatrix(const glm::mat4 &transformation) {
 
 void Node::render() {
   glBindVertexArray(vao);
+
+  // bind texture
+  glActiveTexture(GL_TEXTURE0 + 0);
+  glBindTexture(GL_TEXTURE_2D, tex);
+  glUniform1i(u_texture_sampler, 0);
+
   glUniformMatrix4fv(u_model_matrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
   glUniformMatrix4fv(u_normal_matrix, 1, GL_FALSE, glm::value_ptr(normal_matrix));
-  glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+  glDrawArrays(GL_TRIANGLES, 0, data->num_vertices);
 
   // TODO: call child->render();
 }

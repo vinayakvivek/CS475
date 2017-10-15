@@ -6,8 +6,10 @@
 
 class BuzzHead : public Node {
   void setInitialTransformation() {
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 1.0f));
-    model_matrix *= scale;
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f, 1.3 * 0.3, 0.3f));
+    glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI/2, glm::vec3(0.0f, 1.0f, 0.0f));
+    rotate = glm::rotate(rotate, (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
+    model_matrix *= scale * rotate;
 
     normal_matrix = glm::inverse(glm::transpose(model_matrix));
   }
@@ -15,33 +17,56 @@ class BuzzHead : public Node {
  public:
   BuzzHead(
     std::string name,
-    const GLuint &tex,
     const GLuint &shaderProgram,
-    VertexData *data,
-    Node *parent): Node(name, tex, shaderProgram, data, parent) {
+    Node *parent): Node(name, shaderProgram, parent) {
+
+    tex = LoadTexture("../images/buzz/face3.bmp", 256, 570);
+    data = sphere(200);
+    std::cout << "num_vertices: " << data->num_vertices << "\n";
+
+    populateBuffers();
+    setInitialTransformation();
+  }
+};
+
+class BuzzTorso : public Node {
+  void setInitialTransformation() {
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI/2, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, -250.0f, 0.0f));
+    // rotate = glm::rotate(rotate, (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
+    model_matrix *= translate * scale * rotate;
+
+    normal_matrix = glm::inverse(glm::transpose(model_matrix));
+  }
+
+ public:
+  BuzzTorso(
+    std::string name,
+    const GLuint &shaderProgram,
+    Node *parent): Node(name, shaderProgram, parent) {
+
+    tex = LoadTexture("../images/buzz/suit.bmp", 768, 512);
+    data = cylinder(100, 200);
+    std::cout << "num_vertices: " << data->num_vertices << "\n";
+
+    populateBuffers();
     setInitialTransformation();
   }
 };
 
 class Buzz {
   Node *head;
-
+  Node *torso;
  public:
   explicit Buzz(GLuint shaderProgram) {
-    GLuint head_tex = LoadTexture("../images/all1.bmp", 256, 256);
-    VertexData *data = sphere(200);
-
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
-
-    head = new BuzzHead(
-      "buzz_head",
-      head_tex,
-      shaderProgram,
-      data,
-      NULL);
+    head = new BuzzHead("buzz_head", shaderProgram, NULL);
+    torso = new BuzzTorso("buzz_torso", shaderProgram, NULL);
   }
 
   void render() {
+
+    torso->render();
     head->render();
   }
 };

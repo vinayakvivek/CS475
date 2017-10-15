@@ -25,12 +25,9 @@ class Node {
   int id;
 
   GLuint vao, vbo, tex;
+  GLuint shaderProgram;
 
-  GLuint num_vertices;
-  glm::vec4 *vertices;
-  glm::vec4 *colors;
-  glm::vec2 *tex_coords;
-  glm::vec4 *normals;
+  VertexData *data;
 
   std::size_t vertex_buffer_size;
   std::size_t color_buffer_size;
@@ -63,9 +60,7 @@ class Node {
  public:
   Node(
     std::string name,
-    const GLuint &tex,
     const GLuint &shaderProgram,
-    VertexData *data,
     Node *parent);
   void addChild(Node *node);
   void updateRotate(const glm::vec3 &rotate);

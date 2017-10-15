@@ -84,3 +84,71 @@ VertexData* sphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
 
   return data;
 }
+
+VertexData* cylinder(GLfloat r, GLfloat h, GLuint tesselation) {
+  GLfloat d_theta = (2 * PI / tesselation);
+
+  GLfloat theta, x, y, z;
+  std::vector<glm::vec4> vertices;
+  std::vector<glm::vec4> colors;
+  std::vector<glm::vec2> tex_coords;
+  std::vector<glm::vec4> normals;
+
+  glm::vec4 white_color(1.0f, 1.0f, 1.0f, 1.0f);
+
+  for (int i = 0; i < tesselation; ++i) {
+    theta = i * d_theta;
+
+    x = r * sin(theta);
+    y = h;
+    z = r * cos(theta);
+    vertices.push_back(glm::vec4(x, y, z, 1.0));
+    colors.push_back(white_color);
+    tex_coords.push_back(glm::vec2(theta / PI, 1.0f));
+    normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
+
+    y = 0;
+    vertices.push_back(glm::vec4(x, y, z, 1.0));
+    colors.push_back(white_color);
+    tex_coords.push_back(glm::vec2(theta / PI, 0.0f));
+    normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
+
+    theta += d_theta;
+    x = r * sin(theta);
+    y = 0;
+    z = r * cos(theta);
+    vertices.push_back(glm::vec4(x, y, z, 1.0));
+    colors.push_back(white_color);
+    tex_coords.push_back(glm::vec2(theta / PI, 0.0f));
+    normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
+
+    vertices.push_back(glm::vec4(x, y, z, 1.0));
+    colors.push_back(white_color);
+    tex_coords.push_back(glm::vec2(theta / PI, 0.0f));
+    normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
+
+    y = h;
+    vertices.push_back(glm::vec4(x, y, z, 1.0));
+    colors.push_back(white_color);
+    tex_coords.push_back(glm::vec2(theta / PI, 1.0f));
+    normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
+
+    theta -= d_theta;
+    x = r * sin(theta);
+    y = h;
+    z = r * cos(theta);
+    vertices.push_back(glm::vec4(x, y, z, 1.0));
+    colors.push_back(white_color);
+    tex_coords.push_back(glm::vec2(theta / PI, 1.0f));
+    normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
+  }
+
+  VertexData *data = new VertexData;
+  data->num_vertices = vertices.size();
+  data->vertices = &vertices[0];
+  data->colors = &colors[0];
+  data->tex_coords = &tex_coords[0];
+  data->normals = &normals[0];
+
+  return data;
+}
