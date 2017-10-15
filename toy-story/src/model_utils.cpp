@@ -85,10 +85,10 @@ VertexData* sphere(GLfloat r, GLuint n_lats, GLuint n_longs) {
   return data;
 }
 
-VertexData* cylinder(GLfloat r, GLfloat h, GLuint tesselation) {
+VertexData* cylinder(GLfloat br, GLfloat tr, GLfloat h, GLuint tesselation) {
   GLfloat d_theta = (2 * PI / tesselation);
 
-  GLfloat theta, x, y, z;
+  GLfloat theta, x, y, z, r;
   std::vector<glm::vec4> vertices;
   std::vector<glm::vec4> colors;
   std::vector<glm::vec2> tex_coords;
@@ -99,18 +99,22 @@ VertexData* cylinder(GLfloat r, GLfloat h, GLuint tesselation) {
   for (int i = 0; i < tesselation; ++i) {
     theta = i * d_theta;
 
+    r = tr;
     x = r * sin(theta);
     y = h;
     z = r * cos(theta);
     vertices.push_back(glm::vec4(x, y, z, 1.0));
     colors.push_back(white_color);
-    tex_coords.push_back(glm::vec2(theta / PI, 1.0f));
+    tex_coords.push_back(glm::vec2(theta / (2 * PI), 1.0f));
     normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
 
+    r = br;
+    x = r * sin(theta);
     y = 0;
+    z = r * cos(theta);
     vertices.push_back(glm::vec4(x, y, z, 1.0));
     colors.push_back(white_color);
-    tex_coords.push_back(glm::vec2(theta / PI, 0.0f));
+    tex_coords.push_back(glm::vec2(theta / (2 * PI), 0.0f));
     normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
 
     theta += d_theta;
@@ -119,18 +123,21 @@ VertexData* cylinder(GLfloat r, GLfloat h, GLuint tesselation) {
     z = r * cos(theta);
     vertices.push_back(glm::vec4(x, y, z, 1.0));
     colors.push_back(white_color);
-    tex_coords.push_back(glm::vec2(theta / PI, 0.0f));
+    tex_coords.push_back(glm::vec2(theta / (2 * PI), 0.0f));
     normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
 
     vertices.push_back(glm::vec4(x, y, z, 1.0));
     colors.push_back(white_color);
-    tex_coords.push_back(glm::vec2(theta / PI, 0.0f));
+    tex_coords.push_back(glm::vec2(theta / (2 * PI), 0.0f));
     normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
 
+    r = tr;
+    x = r * sin(theta);
     y = h;
+    z = r * cos(theta);
     vertices.push_back(glm::vec4(x, y, z, 1.0));
     colors.push_back(white_color);
-    tex_coords.push_back(glm::vec2(theta / PI, 1.0f));
+    tex_coords.push_back(glm::vec2(theta / (2 * PI), 1.0f));
     normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
 
     theta -= d_theta;
@@ -139,7 +146,7 @@ VertexData* cylinder(GLfloat r, GLfloat h, GLuint tesselation) {
     z = r * cos(theta);
     vertices.push_back(glm::vec4(x, y, z, 1.0));
     colors.push_back(white_color);
-    tex_coords.push_back(glm::vec2(theta / PI, 1.0f));
+    tex_coords.push_back(glm::vec2(theta / (2 * PI), 1.0f));
     normals.push_back(glm::vec4(x, 0.0f, z, 0.0));
   }
 

@@ -26,6 +26,6 @@ struct VertexData {
 };
 
 VertexData* sphere(GLfloat r, GLuint n_lats = 50, GLuint n_longs = 50);
-VertexData* cylinder(GLfloat r, GLfloat h, GLuint tesselation = 50);
+VertexData* cylinder(GLfloat br, GLfloat tr, GLfloat h, GLuint tesselation = 50);
 
 #endif  // _MODEL_UTIL_HPP_

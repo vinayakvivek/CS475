@@ -2,7 +2,7 @@
 #include "shader_util.hpp"
 #include "view.hpp"
 
-GLfloat half_width = 400, half_height = 400, half_depth = 400;
+GLfloat half_width = 400, half_height = 400, half_depth = 800;
 View *v;
 
 void initView() {

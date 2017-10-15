@@ -5,13 +5,15 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   half_height = h_height;
   half_depth = h_depth;
 
+  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 300.0;
+  c_up_x = 0.0; c_up_y = 1.0; c_up_z = 0.0;
+  c_xrot = 0.0; c_yrot = 0.0; c_zrot = 0.0;
+
+  enable_perspective = true;
+
   initShadersGL();
 
-  ortho_matrix = glm::ortho(-half_width, half_width,
-                            -half_height, half_height,
-                            -half_depth, half_depth);
-  view_matrix = ortho_matrix;
-
+  updateCamera();
   buzz = new Buzz(shaderProgram);
 }
 
@@ -34,4 +36,28 @@ void View::renderGL() {
 
   glUniformMatrix4fv(u_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
   buzz->render();
+}
+
+void View::updateCamera() {
+  // Creating the lookAt and the up vectors for the camera
+  c_rotation_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(c_xrot), glm::vec3(1.0f,0.0f,0.0f));
+  c_rotation_matrix = glm::rotate(c_rotation_matrix, glm::radians(c_yrot), glm::vec3(0.0f,1.0f,0.0f));
+  c_rotation_matrix = glm::rotate(c_rotation_matrix, glm::radians(c_zrot), glm::vec3(0.0f,0.0f,1.0f));
+
+  glm::vec4 c_pos = glm::vec4(c_xpos, c_ypos, c_zpos, 1.0) * c_rotation_matrix;
+  glm::vec4 c_up = glm::vec4(c_up_x, c_up_y, c_up_z, 1.0) * c_rotation_matrix;
+
+  // Creating the lookAt matrix
+  glm::mat4 lookat_matrix = glm::lookAt(glm::vec3(c_pos), glm::vec3(0.0), glm::vec3(c_up));
+
+  // creating the projection matrix
+  if (enable_perspective)
+    projection_matrix = glm::frustum(-100.0f, 100.0f, -100.0f, 100.0f, 100.0f, 500.0f);
+    // projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 50.0f, 250.0f);
+  else
+    projection_matrix = glm::ortho(-half_width, half_width,
+                            -half_height, half_height,
+                            -half_depth, half_depth);
+
+  view_matrix = projection_matrix * lookat_matrix;
 }
