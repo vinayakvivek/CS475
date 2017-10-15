@@ -18,7 +18,7 @@ class Buzz {
   Node *head;
  public:
   Buzz(GLuint shaderProgram) {
-    GLuint head_tex = LoadTexture("../images/buzz/face_mask.bmp", 436, 591);
+    GLuint head_tex = LoadTexture("../images/all1.bmp", 256, 256);
     VertexData *data = sphere(200);
 
     std::cout << "num_vertices: " << data->num_vertices << "\n";

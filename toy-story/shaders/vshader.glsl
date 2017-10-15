@@ -10,8 +10,10 @@ uniform mat4 uModelMatrix;
 uniform mat4 uNormalMatrix;
 
 out vec4 color;
+out vec2 tex_coord;
 
 void main () {
 	gl_Position = uViewMatrix * uModelMatrix * vPosition;
 	color = vColor;
+  tex_coord = vTexture;
 }

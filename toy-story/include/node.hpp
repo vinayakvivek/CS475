@@ -42,6 +42,8 @@ class Node {
   GLuint u_model_matrix;
   GLuint u_normal_matrix;
 
+  GLuint u_texture_sampler;
+
   // transformations
   glm::mat4 model_matrix;
   glm::mat4 normal_matrix;

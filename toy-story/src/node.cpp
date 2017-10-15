@@ -33,6 +33,8 @@ Node::Node(
   u_model_matrix = glGetUniformLocation(shaderProgram, "uModelMatrix");
   u_normal_matrix = glGetUniformLocation(shaderProgram, "uNormalMatrix");
 
+  u_texture_sampler = glGetUniformLocation(shaderProgram, "textureSampler");
+
   model_matrix = glm::mat4(1.0f);
   normal_matrix = glm::mat4(1.0f);
 
@@ -45,6 +47,11 @@ void Node::populateBuffers() {
   glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
+  // bind texture
+  glActiveTexture(GL_TEXTURE0 + 0);
+  glBindTexture(GL_TEXTURE_2D, tex);
+  glUniform1i(u_texture_sampler, 0);
+
   glEnableVertexAttribArray(v_position);
   glVertexAttribPointer(v_position, 4, GL_FLOAT, GL_FALSE, 0,
                         BUFFER_OFFSET(0));
@@ -55,7 +62,7 @@ void Node::populateBuffers() {
   glVertexAttribPointer(v_texture, 2, GL_FLOAT, GL_FALSE, 0,
                         BUFFER_OFFSET(vertex_buffer_size + color_buffer_size));
   glEnableVertexAttribArray(v_normal);
-  glVertexAttribPointer(v_normal, 3, GL_FLOAT, GL_FALSE, 0,
+  glVertexAttribPointer(v_normal, 4, GL_FLOAT, GL_FALSE, 0,
                         BUFFER_OFFSET(vertex_buffer_size + color_buffer_size +
                           tex_coord_buffer_size));
 
@@ -77,7 +84,7 @@ void Node::populateBuffers() {
   glBufferSubData(GL_ARRAY_BUFFER,
                   vertex_buffer_size + color_buffer_size,
                   tex_coord_buffer_size,
-                  colors);
+                  tex_coords);
   glBufferSubData(GL_ARRAY_BUFFER,
                   vertex_buffer_size + color_buffer_size + tex_coord_buffer_size,
                   normal_buffer_size,
