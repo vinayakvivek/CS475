@@ -12,12 +12,12 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   enable_perspective = true;
 
   light_positions[0] = glm::vec4(400.0, 400.0, 400.0, 1.0);
-  light_positions[1] = glm::vec4(-400.0, -400.0, 400.0, 1.0);
+  light_positions[1] = glm::vec4(-400.0, -400.0, -400.0, 1.0);
 
-  spotlight_position[0] = glm::vec4(0.0, 1000.0, 0.0, 1.0);
+  spotlight_position[0] = glm::vec4(0.0, 0.0, 300.0, 1.0);
   spotlight_position[1] = glm::vec4(0.0, 0.0, 0.0, 1.0);
 
-  lights_state[0] = 1;
+  lights_state[0] = 0;
   lights_state[1] = 0;
   lights_state[2] = 1;
 
