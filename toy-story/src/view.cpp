@@ -11,6 +11,16 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 
   enable_perspective = true;
 
+  light_positions[0] = glm::vec4(400.0, 400.0, 400.0, 1.0);
+  light_positions[1] = glm::vec4(-400.0, -400.0, 400.0, 1.0);
+
+  spotlight_position[0] = glm::vec4(0.0, 1000.0, 0.0, 1.0);
+  spotlight_position[1] = glm::vec4(0.0, 0.0, 0.0, 1.0);
+
+  lights_state[0] = 1;
+  lights_state[1] = 0;
+  lights_state[2] = 1;
+
   initShadersGL();
 
   updateCamera();
@@ -29,11 +39,19 @@ void View::initShadersGL() {
   glUseProgram(shaderProgram);
 
   u_view_matrix = glGetUniformLocation(shaderProgram, "uViewMatrix");
+  u_camera_position = glGetUniformLocation(shaderProgram, "uCameraPosition");
+  u_light_positions = glGetUniformLocation(shaderProgram, "uLightPositions");
+  u_spotlight_position = glGetUniformLocation(shaderProgram, "uSpotLightPosition");
+  u_lights_state = glGetUniformLocation(shaderProgram, "uLightsState");
 }
 
 void View::renderGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  glUniform4fv(u_camera_position, 1, glm::value_ptr(glm::vec4(c_xpos, c_ypos, c_zpos, 1.0)));
+  glUniform4fv(u_light_positions, 2, glm::value_ptr(light_positions[0]));
+  glUniform4fv(u_spotlight_position, 2, glm::value_ptr(spotlight_position[0]));
+  glUniform1uiv(u_lights_state, 3, &lights_state[0]);
   glUniformMatrix4fv(u_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
   buzz->render();
 }
@@ -52,7 +70,7 @@ void View::updateCamera() {
 
   // creating the projection matrix
   if (enable_perspective)
-    projection_matrix = glm::frustum(-100.0f, 100.0f, -100.0f, 100.0f, 100.0f, 500.0f);
+    projection_matrix = glm::frustum(-100.0f, 100.0f, -100.0f, 100.0f, 100.0f, -half_depth);
     // projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 50.0f, 250.0f);
   else
     projection_matrix = glm::ortho(-half_width, half_width,

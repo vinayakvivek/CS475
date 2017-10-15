@@ -13,6 +13,10 @@ class View {
 
   GLuint shaderProgram;
   GLuint u_view_matrix;
+  GLuint u_camera_position;
+  GLuint u_light_positions;
+  GLuint u_spotlight_position;
+  GLuint u_lights_state;
 
   glm::mat4 projection_matrix;
   glm::mat4 c_rotation_matrix;
@@ -26,6 +30,10 @@ class View {
 
   // Enable/Disable perspective view
   bool enable_perspective;
+
+  glm::vec4 light_positions[2];
+  glm::vec4 spotlight_position[2];
+  GLuint lights_state[3];
 
   Buzz *buzz;
 

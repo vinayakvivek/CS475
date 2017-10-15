@@ -31,7 +31,7 @@ class BuzzHead : public Node {
 
 class BuzzTorso : public Node {
   void setInitialTransformation() {
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.4f, 1.0f, 0.7f));
     glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, -250.0f, 0.0f));
     // rotate = glm::rotate(rotate, (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -59,6 +59,10 @@ class BuzzTorso : public Node {
     setInitialTransformation();
   }
 };
+
+// class BuzzLeftUpperArm : public Node {
+
+// }
 
 class Buzz {
   Node *head;
