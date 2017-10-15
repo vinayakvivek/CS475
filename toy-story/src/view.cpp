@@ -61,3 +61,27 @@ void View::updateCamera() {
 
   view_matrix = projection_matrix * lookat_matrix;
 }
+
+void View::rotateCamera(GLuint axis, GLfloat angle) {
+  switch (axis) {
+    case 0:
+      // X axis
+      c_xrot += angle;
+      break;
+    case 1:
+      // Y axis
+      c_yrot += angle;
+      break;
+    case 2:
+      // Z axis
+      c_zrot += angle;
+      break;
+  }
+
+  updateCamera();
+}
+
+void View::zoom(GLfloat amount) {
+  c_zpos -= amount;
+  updateCamera();
+}

@@ -33,6 +33,7 @@ class View {
  public:
   View(GLfloat h_width, GLfloat h_height, GLfloat h_depth);
   void rotateCamera(GLuint axis, GLfloat angle);
+  void zoom(GLfloat amount);
   void updateCamera();
   void renderGL();
 };

@@ -21,7 +21,7 @@ class BuzzHead : public Node {
     Node *parent): Node(name, shaderProgram, parent) {
 
     tex = LoadTexture("../images/buzz/face3.bmp", 256, 570);
-    data = sphere(200);
+    data = sphere(200, 30, 30);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     populateBuffers();
