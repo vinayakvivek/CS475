@@ -71,6 +71,31 @@ namespace toys {
       case GLFW_KEY_X:
         v->zoom(-5);
         break;
+
+      // model rotation
+      case GLFW_KEY_W:
+        v->rotateNode(1, 1);
+        break;
+
+      case GLFW_KEY_S:
+        v->rotateNode(1, -1);
+        break;
+
+      case GLFW_KEY_A:
+        v->rotateNode(0, 1);
+        break;
+
+      case GLFW_KEY_D:
+        v->rotateNode(0, -1);
+        break;
+
+      case GLFW_KEY_Q:
+        v->rotateNode(2, 1);
+        break;
+
+      case GLFW_KEY_E:
+        v->rotateNode(2, -1);
+        break;
     }
   }
 };  // namespace toys

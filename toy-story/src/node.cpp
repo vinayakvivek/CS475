@@ -82,8 +82,8 @@ void Node::addChild(Node *node) {
 }
 
 void Node::updateModelMatrix(const glm::mat4 &transformation) {
-  model_matrix *= transformation;
-  normal_matrix *= glm::inverse(glm::transpose(transformation));
+  model_matrix = transformation * model_matrix;
+  normal_matrix = glm::inverse(glm::transpose(model_matrix));
 
   for (Node *child : children) {
     child->updateModelMatrix(transformation);
@@ -103,4 +103,24 @@ void Node::render() {
   glDrawArrays(GL_TRIANGLES, 0, data->num_vertices);
 
   // TODO: call child->render();
+}
+
+void Node::rotate(GLuint axis, GLfloat angle) {
+  glm::mat4 rot_matrix(1.0f);
+  switch (axis) {
+    case 0:
+      // X axis
+      rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(1.0, 0.0, 0.0));
+      break;
+    case 1:
+      // Y axis
+      rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(0.0, 1.0, 0.0));
+      break;
+    case 2:
+      // Z axis
+      rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(0.0, 0.0, 1.0));
+      break;
+  }
+  rot_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(pivot_point)) * rot_matrix * glm::translate(glm::mat4(1.0f), glm::vec3(-pivot_point));
+  updateModelMatrix(rot_matrix);
 }

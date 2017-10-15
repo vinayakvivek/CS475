@@ -99,6 +99,10 @@ void View::rotateCamera(GLuint axis, GLfloat angle) {
   updateCamera();
 }
 
+void View::rotateNode(GLuint axis, GLfloat angle) {
+  buzz->rotate(axis, angle);
+}
+
 void View::zoom(GLfloat amount) {
   c_zpos -= amount;
   updateCamera();

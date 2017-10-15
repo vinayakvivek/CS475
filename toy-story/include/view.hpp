@@ -36,6 +36,7 @@ class View {
   GLuint lights_state[3];
 
   Buzz *buzz;
+  int curr_node;
 
   void initShadersGL();
  public:
@@ -44,6 +45,8 @@ class View {
   void zoom(GLfloat amount);
   void updateCamera();
   void renderGL();
+
+  void rotateNode(GLuint axis, GLfloat angle);
 };
 
 #endif  // VIEW_HPP_

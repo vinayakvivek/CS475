@@ -47,6 +47,8 @@ class Node {
   glm::mat4 model_matrix;
   glm::mat4 normal_matrix;
 
+  glm::vec4 pivot_point;
+
   std::vector<Node*> children;
   Node *parent;
 
@@ -63,8 +65,8 @@ class Node {
     const GLuint &shaderProgram,
     Node *parent);
   void addChild(Node *node);
-  void updateRotate(const glm::vec3 &rotate);
-  void updateTranslation(const glm::vec3 &trans);
+  void rotate(GLuint axis, GLfloat angle);
+  void translate(const glm::vec3 &trans);
   void updateModelMatrix(const glm::mat4 &transformation);
   void render();
 };
