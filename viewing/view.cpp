@@ -258,9 +258,11 @@ void View::addModel(std::string name, glm::vec3 s, glm::vec3 r, glm::vec3 t) {
 void View::renderGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
+
 	glBindVertexArray(vao[0]);
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
-	glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
+	// glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 	glUniform1i(uPerspectiveDivide, perspective_divide);
 	glUniform1i(uToDCS, to_dcs);
 	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
@@ -268,7 +270,7 @@ void View::renderGL() {
 
 	glBindVertexArray(vao[1]);
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
-	glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
+	// glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 	glUniform1i(uPerspectiveDivide, perspective_divide);
 	glUniform1i(uToDCS, to_dcs);
 	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));
@@ -276,7 +278,7 @@ void View::renderGL() {
 
 	glBindVertexArray(vao[2]);
 	glUniformMatrix4fv(uModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
-	glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
+	// glUniformMatrix4fv(uViewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 	glUniform1i(uPerspectiveDivide, perspective_divide);
 	glUniform1i(uToDCS, to_dcs);
 	glUniform4fv(uWindowLimits, 1, glm::value_ptr(window_limits));

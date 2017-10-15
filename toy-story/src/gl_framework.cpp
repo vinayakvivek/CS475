@@ -14,6 +14,8 @@ namespace toys {
     glEnable(GL_DEPTH_TEST);
     // Enable Gourard shading
     glShadeModel(GL_SMOOTH);
+
+    glEnable(GL_PROGRAM_POINT_SIZE);
   }
 
   // !GLFW Error Callback
