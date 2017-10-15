@@ -3,7 +3,6 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include <vector>
 #include <string>
 #include <iostream>
@@ -14,11 +13,14 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include "model_utils.hpp"
+
 #define BUFFER_OFFSET(offset) (reinterpret_cast<void *>(offset))
 #define PI 3.14159265
 #define deg_to_rad(a) (a * PI / 180.0)
 
 class Node {
+ protected:
   std::string name;
   int id;
 
@@ -52,7 +54,7 @@ class Node {
   Node *parent;
 
   void populateBuffers();
-  // virtual void setInitialTransformation();
+  virtual void setInitialTransformation() = 0;
   // void updateScale(const glm::vec3 &scale);
   // void updateShear(GLfloat sx1, GLfloat sx2,
   //                  GLfloat sy1, GLfloat sy2,
@@ -63,11 +65,7 @@ class Node {
     std::string name,
     const GLuint &tex,
     const GLuint &shaderProgram,
-    GLuint num_vertices,
-    glm::vec4 *vertices,
-    glm::vec4 *colors,
-    glm::vec2 *tex_coords,
-    glm::vec4 *normals,
+    VertexData *data,
     Node *parent);
   void addChild(Node *node);
   void updateRotate(const glm::vec3 &rotate);

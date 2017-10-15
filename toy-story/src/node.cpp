@@ -4,22 +4,18 @@ Node::Node(
     std::string name,
     const GLuint &tex,
     const GLuint &shaderProgram,
-    GLuint num_vertices,
-    glm::vec4 *vertices,
-    glm::vec4 *colors,
-    glm::vec2 *tex_coords,
-    glm::vec4 *normals,
+    VertexData *data,
     Node *parent) {
   this->name = name;
   this->tex = tex;
   glGenVertexArrays(1, &this->vao);
   glGenBuffers(1, &this->vbo);
 
-  this->num_vertices = num_vertices;
-  this->vertices = vertices;
-  this->colors = colors;
-  this->tex_coords = tex_coords;
-  this->normals = normals;
+  num_vertices = data->num_vertices;
+  vertices = data->vertices;
+  colors = data->colors;
+  tex_coords = data->tex_coords;
+  normals = data->normals;
 
   this->vertex_buffer_size = num_vertices * sizeof(glm::vec4);
   this->color_buffer_size = num_vertices * sizeof(glm::vec4);

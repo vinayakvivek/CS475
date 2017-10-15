@@ -5,7 +5,6 @@
 #include "shader_util.hpp"
 #include "models.hpp"
 
-
 class View {
   // screen size
   GLfloat half_width;
