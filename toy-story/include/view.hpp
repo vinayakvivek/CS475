@@ -36,7 +36,12 @@ class View {
   GLuint lights_state[3];
 
   Buzz *buzz;
-  int curr_node;
+
+  /**
+   *  0 -> Buzz
+   *  1 -> Rex
+   */
+  int curr_selected_model;
 
   void initShadersGL();
  public:
@@ -46,7 +51,9 @@ class View {
   void updateCamera();
   void renderGL();
 
+  void selectModel(int model_id);
   void rotateNode(GLuint axis, GLfloat angle);
+  void selectNode(int node_id);
 };
 
 #endif  // VIEW_HPP_

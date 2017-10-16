@@ -17,14 +17,15 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   spotlight_position[0] = glm::vec4(0.0, 0.0, 300.0, 1.0);
   spotlight_position[1] = glm::vec4(0.0, 0.0, 0.0, 1.0);
 
-  lights_state[0] = 0;
-  lights_state[1] = 0;
-  lights_state[2] = 1;
+  lights_state[0] = 1;
+  lights_state[1] = 1;
+  lights_state[2] = 0;
 
   initShadersGL();
 
   updateCamera();
   buzz = new Buzz(shaderProgram);
+  curr_selected_model = 0;
 }
 
 void View::initShadersGL() {
@@ -99,8 +100,26 @@ void View::rotateCamera(GLuint axis, GLfloat angle) {
   updateCamera();
 }
 
+void View::selectModel(int model_id) {
+  curr_selected_model = model_id;
+}
+
 void View::rotateNode(GLuint axis, GLfloat angle) {
-  buzz->rotate(axis, angle);
+  switch (curr_selected_model) {
+    case 0:
+      // Buzz Light-year
+      buzz->rotate(axis, angle);
+      break;
+  }
+}
+
+void View::selectNode(int node_id) {
+  switch (curr_selected_model) {
+    case 0:
+      // Buzz Light-year
+      buzz->selectNode(node_id);
+      break;
+  }
 }
 
 void View::zoom(GLfloat amount) {

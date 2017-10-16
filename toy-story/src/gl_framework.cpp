@@ -96,6 +96,25 @@ namespace toys {
       case GLFW_KEY_E:
         v->rotateNode(2, -1);
         break;
+
+      // select model
+      case GLFW_KEY_B:
+        // buzz
+        v->selectModel(0);
+        break;
+
+      // select node
+      case GLFW_KEY_0:
+        v->selectNode(0);
+        break;
+
+      case GLFW_KEY_1:
+        v->selectNode(1);
+        break;
+
+      case GLFW_KEY_2:
+        v->selectNode(2);
+        break;
     }
   }
 };  // namespace toys

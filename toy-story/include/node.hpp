@@ -47,6 +47,10 @@ class Node {
   glm::mat4 model_matrix;
   glm::mat4 normal_matrix;
 
+  GLfloat xpos, ypos, zpos;
+  GLfloat xrot, yrot, zrot;
+  GLfloat xrot_limits[2], yrot_limits[2], zrot_limits[2];
+
   glm::vec4 pivot_point;
 
   std::vector<Node*> children;
@@ -54,14 +58,11 @@ class Node {
 
   void populateBuffers();
   virtual void setInitialTransformation() = 0;
-  // void updateScale(const glm::vec3 &scale);
-  // void updateShear(GLfloat sx1, GLfloat sx2,
-  //                  GLfloat sy1, GLfloat sy2,
-  //                  GLfloat sz1, GLfloat sz2);
 
  public:
   Node(
     std::string name,
+    int id,
     const GLuint &shaderProgram,
     Node *parent);
   void addChild(Node *node);

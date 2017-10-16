@@ -2,11 +2,18 @@
 
 Node::Node(
     std::string name,
-    // const GLuint &tex,
+    int id,
     const GLuint &shaderProgram,
-    // VertexData *data,
     Node *parent) {
   this->name = name;
+  this->id = id;
+
+  xpos = 0.0; ypos = 0.0; zpos = 0.0;
+  xrot = 0.0; yrot = 0.0; zrot = 0.0;
+
+  xrot_limits[0] = xrot_limits[1] = 0.0;
+  yrot_limits[0] = yrot_limits[1] = 0.0;
+  zrot_limits[0] = zrot_limits[1] = 0.0;
 
   this->shaderProgram = shaderProgram;
 
@@ -110,15 +117,24 @@ void Node::rotate(GLuint axis, GLfloat angle) {
   switch (axis) {
     case 0:
       // X axis
-      rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(1.0, 0.0, 0.0));
+      if (xrot + angle >= xrot_limits[0] && xrot + angle <= xrot_limits[1]) {
+        xrot += angle;
+        rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(1.0, 0.0, 0.0));
+      }
       break;
     case 1:
       // Y axis
-      rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(0.0, 1.0, 0.0));
+      if (yrot + angle >= yrot_limits[0] && yrot + angle <= yrot_limits[1]) {
+        yrot += angle;
+        rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(0.0, 1.0, 0.0));
+      }
       break;
     case 2:
       // Z axis
-      rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(0.0, 0.0, 1.0));
+      if (zrot + angle >= zrot_limits[0] && zrot + angle <= zrot_limits[1]) {
+        zrot += angle;
+        rot_matrix = glm::rotate(rot_matrix, glm::radians(angle), glm::vec3(0.0, 0.0, 1.0));
+      }
       break;
   }
   rot_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(pivot_point)) * rot_matrix * glm::translate(glm::mat4(1.0f), glm::vec3(-pivot_point));
