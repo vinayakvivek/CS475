@@ -107,13 +107,17 @@ namespace toys {
       case GLFW_KEY_0:
         v->selectNode(0);
         break;
-
       case GLFW_KEY_1:
         v->selectNode(1);
         break;
-
       case GLFW_KEY_2:
         v->selectNode(2);
+        break;
+      case GLFW_KEY_3:
+        v->selectNode(3);
+        break;
+      case GLFW_KEY_4:
+        v->selectNode(4);
         break;
     }
   }

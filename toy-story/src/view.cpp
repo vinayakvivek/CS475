@@ -18,8 +18,8 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   spotlight_position[1] = glm::vec4(0.0, 0.0, 0.0, 1.0);
 
   lights_state[0] = 1;
-  lights_state[1] = 1;
-  lights_state[2] = 0;
+  lights_state[1] = 0;
+  lights_state[2] = 1;
 
   initShadersGL();
 

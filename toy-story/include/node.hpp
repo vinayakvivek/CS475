@@ -44,6 +44,7 @@ class Node {
   GLuint u_texture_sampler;
 
   // transformations
+  glm::mat4 local_matrix;  // for initial local transformations
   glm::mat4 model_matrix;
   glm::mat4 normal_matrix;
 

@@ -15,6 +15,10 @@ Node::Node(
   yrot_limits[0] = yrot_limits[1] = 0.0;
   zrot_limits[0] = zrot_limits[1] = 0.0;
 
+  local_matrix = glm::mat4(1.0f);
+  model_matrix = glm::mat4(1.0f);
+  normal_matrix = glm::mat4(1.0f);
+
   this->shaderProgram = shaderProgram;
 
   this->parent = parent;
@@ -86,11 +90,13 @@ void Node::populateBuffers() {
 
 void Node::addChild(Node *node) {
   children.push_back(node);
+  node->updateModelMatrix(model_matrix * glm::inverse(local_matrix));
 }
 
 void Node::updateModelMatrix(const glm::mat4 &transformation) {
   model_matrix = transformation * model_matrix;
   normal_matrix = glm::inverse(glm::transpose(model_matrix));
+  pivot_point = transformation * pivot_point;
 
   for (Node *child : children) {
     child->updateModelMatrix(transformation);
