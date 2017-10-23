@@ -122,6 +122,15 @@ namespace toys {
       case GLFW_KEY_5:
         v->selectNode(5);
         break;
+      case GLFW_KEY_6:
+        v->selectNode(6);
+        break;
+      case GLFW_KEY_7:
+        v->selectNode(7);
+        break;
+      case GLFW_KEY_8:
+        v->selectNode(8);
+        break;
     }
   }
 };  // namespace toys
