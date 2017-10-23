@@ -119,6 +119,9 @@ namespace toys {
       case GLFW_KEY_4:
         v->selectNode(4);
         break;
+      case GLFW_KEY_5:
+        v->selectNode(5);
+        break;
     }
   }
 };  // namespace toys
