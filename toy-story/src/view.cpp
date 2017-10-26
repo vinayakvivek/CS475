@@ -5,7 +5,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   half_height = h_height;
   half_depth = h_depth;
 
-  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 300.0;
+  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 500.0;
   c_up_x = 0.0; c_up_y = 1.0; c_up_z = 0.0;
   c_xrot = 0.0; c_yrot = 0.0; c_zrot = 0.0;
 
@@ -98,6 +98,12 @@ void View::rotateCamera(GLuint axis, GLfloat angle) {
   }
 
   updateCamera();
+}
+
+void View::toggleLight(int light_id) {
+  if (light_id < 0 || light_id > 2)
+    return;
+  lights_state[light_id] = !lights_state[light_id];
 }
 
 void View::selectModel(int model_id) {

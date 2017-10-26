@@ -131,6 +131,20 @@ namespace toys {
       case GLFW_KEY_8:
         v->selectNode(8);
         break;
+
+      // toggle lights
+      case GLFW_KEY_J:
+        if (action == GLFW_PRESS)
+          v->toggleLight(0);
+        break;
+      case GLFW_KEY_K:
+        if (action == GLFW_PRESS)
+          v->toggleLight(1);
+        break;
+      case GLFW_KEY_L:
+        if (action == GLFW_PRESS)
+          v->toggleLight(2);
+        break;
     }
   }
 };  // namespace toys

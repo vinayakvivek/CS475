@@ -23,7 +23,7 @@ class BuzzHead : public Node {
 
     tex = LoadTexture("../images/buzz/face3.bmp", 256, 570);
     data = sphere(200, 30, 30);
-    pivot_point = glm::vec4(0.0, -200, 0.0, 1.0);
+    pivot_point = glm::vec4(0.0, 200.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -50.0; xrot_limits[1] = 30.0;

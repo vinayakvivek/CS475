@@ -51,6 +51,7 @@ class View {
   void updateCamera();
   void renderGL();
 
+  void toggleLight(int light_id);
   void selectModel(int model_id);
   void rotateNode(GLuint axis, GLfloat angle);
   void selectNode(int node_id);
