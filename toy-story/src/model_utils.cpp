@@ -198,7 +198,7 @@ VertexData* cylinder(
       vertices.push_back(glm::vec4(x, y, z, 1.0));
       colors.push_back(white_color);
       tex_coords.push_back(glm::vec2(0.0f, 0.0f));
-      normals.push_back(glm::vec4(0.0f, -g1.0f, 0.0f, 0.0));
+      normals.push_back(glm::vec4(0.0f, -1.0f, 0.0f, 0.0));
     }
   }
 
