@@ -5,7 +5,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   half_height = h_height;
   half_depth = h_depth;
 
-  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 2000.0;
+  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 600.0;
   c_up_x = 0.0; c_up_y = 1.0; c_up_z = 0.0;
   c_xrot = 0.0; c_yrot = 0.0; c_zrot = 0.0;
 
