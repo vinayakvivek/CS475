@@ -137,13 +137,14 @@ class BuzzHip : public Node {
 
 class BuzzLeftUpperArm : public Node {
   void setInitialTransformation() {
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    rotate = glm::rotate(rotate, (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
-    // rotate = glm::rotate(rotate, glm::radians(-45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    local_matrix = glm::rotate(glm::mat4(1.0f), -(float)PI/2, glm::vec3(0.0f, 1.0f, 0.0f));
+    updateModelMatrix(local_matrix);
+
+    glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
+
     glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(120.0f, 130.0f, 0.0f));
 
-    glm::mat4 initial_transformation = translate * scale * rotate;
+    glm::mat4 initial_transformation = translate * rotate;
     updateModelMatrix(initial_transformation);
   }
 
@@ -154,14 +155,14 @@ class BuzzLeftUpperArm : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    tex = LoadTexture("../images/buzz/right_hand.bmp", 1024, 1024);
     data = cylinder(30, 20, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
-    xrot_limits[0] = -180.0; xrot_limits[1] = 40.0;
-    yrot_limits[0] = -150.0; yrot_limits[1] = 0.0;
-    zrot_limits[0] = -0.0; zrot_limits[1] = 180.0;
+    xrot_limits[0] = -0.0; xrot_limits[1] = 180.0;
+    yrot_limits[0] = -0.0; yrot_limits[1] = 150.0;
+    zrot_limits[0] = -180.0; zrot_limits[1] = 40.0;
 
     populateBuffers();
     setInitialTransformation();
@@ -170,13 +171,15 @@ class BuzzLeftUpperArm : public Node {
 
 class BuzzRightUpperArm : public Node {
   void setInitialTransformation() {
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    rotate = glm::rotate(rotate, (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
+    local_matrix = glm::rotate(glm::mat4(1.0f), (float)PI/2, glm::vec3(0.0f, 1.0f, 0.0f));
+    updateModelMatrix(local_matrix);
+
+    glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
     // rotate = glm::rotate(rotate, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(-120.0f, 130.0f, 0.0f));
 
-    glm::mat4 initial_transformation = translate * scale * rotate;
+
+    glm::mat4 initial_transformation = translate * rotate;
     updateModelMatrix(initial_transformation);
   }
 
@@ -192,9 +195,9 @@ class BuzzRightUpperArm : public Node {
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
-    xrot_limits[0] = -180.0; xrot_limits[1] = 40.0;
-    yrot_limits[0] = 0.0; yrot_limits[1] = 150.0;
-    zrot_limits[0] = -0.0; zrot_limits[1] = 180.0;
+    xrot_limits[0] = -0.0; xrot_limits[1] = 180.0;
+    yrot_limits[0] = -150.0; yrot_limits[1] = 0.0;
+    zrot_limits[0] = -40.0; zrot_limits[1] = 180.0;
 
     populateBuffers();
     setInitialTransformation();
@@ -221,7 +224,16 @@ class BuzzLowerArm : public Node {
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -150.0; xrot_limits[1] = 5.0;
-    yrot_limits[0] = -150.0; yrot_limits[1] = 0.0;
+
+    int parent_id = parent->getId();
+    if (parent_id == 3) {
+      // parent is left_upper_arm
+      yrot_limits[0] = -0.0; yrot_limits[1] = 150.0;
+    } else if (parent_id == 6) {
+      // parent is right_upper_arm
+      yrot_limits[0] = -150.0; yrot_limits[1] = 0.0;
+    }
+
     zrot_limits[0] = -0.0; zrot_limits[1] = 0.0;
 
     populateBuffers();
@@ -260,7 +272,7 @@ class BuzzHand : public Node {
 class BuzzLeftThigh : public Node {
   void setInitialTransformation() {
     glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(-40.0f, 0.0f, 0.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 0.0f, 0.0f));
     glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(0.0f, 1.0f, 0.0f));
     rotate = glm::rotate(rotate, (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -280,9 +292,9 @@ class BuzzLeftThigh : public Node {
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
-    xrot_limits[0] = -80.0; xrot_limits[1] = 50.0;
-    yrot_limits[0] = 0.0; yrot_limits[1] = 150.0;
-    zrot_limits[0] = -80.0; zrot_limits[1] = 0.0;
+    xrot_limits[0] = -50.0; xrot_limits[1] = 80.0;
+    yrot_limits[0] = -30.0; yrot_limits[1] = 30.0;
+    zrot_limits[0] = -0.0; zrot_limits[1] = 80.0;
 
     populateBuffers();
     setInitialTransformation();
@@ -292,7 +304,7 @@ class BuzzLeftThigh : public Node {
 class BuzzRightThigh : public Node {
   void setInitialTransformation() {
     glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 0.0f, 0.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(-40.0f, 0.0f, 0.0f));
     glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(0.0f, 1.0f, 0.0f));
     rotate = glm::rotate(rotate, (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -312,9 +324,9 @@ class BuzzRightThigh : public Node {
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
-    xrot_limits[0] = -80.0; xrot_limits[1] = 50.0;
-    yrot_limits[0] = 0.0; yrot_limits[1] = 150.0;
-    zrot_limits[0] = 0.0; zrot_limits[1] = 80.0;
+    xrot_limits[0] = -50.0; xrot_limits[1] = 80.0;
+    yrot_limits[0] = -30.0; yrot_limits[1] = 30.0;
+    zrot_limits[0] = -80.0; zrot_limits[1] = 0.0;
 
     populateBuffers();
     setInitialTransformation();
@@ -340,7 +352,7 @@ class BuzzLeg : public Node {
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
-    xrot_limits[0] = -0.0; xrot_limits[1] = 80.0;
+    xrot_limits[0] = -80.0; xrot_limits[1] = 0.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
     zrot_limits[0] = -0.0; zrot_limits[1] = 0.0;
 
@@ -369,7 +381,7 @@ class BuzzFoot : public Node {
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -10.0; xrot_limits[1] = 40.0;
-    yrot_limits[0] = -30.0; yrot_limits[1] = 30.0;
+    yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
     zrot_limits[0] = -5.0; zrot_limits[1] = 5.0;
 
     populateBuffers();
@@ -448,23 +460,23 @@ class Buzz {
 
     curr_selected_node = 0;
 
-    // left_lower_arm->rotate(0, -120.0f);
-    // left_upper_arm->rotate(1, 90.0f);
-    // left_upper_arm->rotate(2, -60.0f);
+    left_upper_arm->rotate(1, 90.0f);
+    left_upper_arm->rotate(0, 60.0f);
+    left_lower_arm->rotate(0, -120.0f);
 
-    // right_lower_arm->rotate(0, -120.0f);
-    // right_upper_arm->rotate(1, -90.0f);
-    // right_upper_arm->rotate(2, 60.0f);
+    right_upper_arm->rotate(1, -90.0f);
+    right_upper_arm->rotate(0, 60.0f);
+    right_lower_arm->rotate(0, -120.0f);
 
-    left_thigh->rotate(0, -5.0f);
-    left_thigh->rotate(2, -5.0f);
-    left_leg->rotate(0, 5.0f);
-    left_foot->rotate(2, 5.0f);
+    left_thigh->rotate(0, 5.0f);
+    left_thigh->rotate(2, 5.0f);
+    left_leg->rotate(0, -5.0f);
+    left_foot->rotate(2, -5.0f);
 
-    right_thigh->rotate(0, -5.0f);
-    right_thigh->rotate(2, 5.0f);
-    right_leg->rotate(0, 5.0f);
-    right_foot->rotate(2, -5.0f);
+    right_thigh->rotate(0, 5.0f);
+    right_thigh->rotate(2, -5.0f);
+    right_leg->rotate(0, -5.0f);
+    right_foot->rotate(2, 5.0f);
   }
 
   void render() {

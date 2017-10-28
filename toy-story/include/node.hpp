@@ -71,6 +71,8 @@ class Node {
   void translate(const glm::vec3 &trans);
   void updateModelMatrix(const glm::mat4 &transformation);
   void render();
+
+  int getId() {return id;}
 };
 
 #endif  // _NODE_HPP_
