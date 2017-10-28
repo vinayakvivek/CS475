@@ -94,7 +94,7 @@ void main () {
     vec3 lightVector = lightPosition.xyz - position.xyz;
     // optional: attenuation
     float dist = length(lightVector);
-    float attenuation = 1.0 / (1.0 + 0.0001 * dist + 0.000001 * dist * dist);
+    float attenuation = 1.0 / (1.0 + 0.00001 * dist + 0.0000001 * dist * dist);
 
     lightVector = normalize(lightVector);
 

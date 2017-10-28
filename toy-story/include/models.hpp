@@ -37,6 +37,35 @@ class Floor : public Node {
   }
 };
 
+class Ceiling : public Node {
+  void setInitialTransformation() {
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, FLOOR_LEVEL + WALL_HEIGHT, 0.0f));
+    glm::mat4 initial_transformation = translate * scale;
+    updateModelMatrix(initial_transformation);
+  }
+
+ public:
+  Ceiling(
+    std::string name,
+    int id,
+    const GLuint &shaderProgram,
+    Node *parent): Node(name, id, shaderProgram, parent) {
+
+    tex = LoadTexture("../images/wall.bmp", 1024, 1024);
+    data = cuboid(FLOOR_LENGTH, FLOOR_LENGTH, 5);
+    pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
+    std::cout << "num_vertices: " << data->num_vertices << "\n";
+
+    xrot_limits[0] = -0.0; xrot_limits[1] = 0.0;
+    yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
+    zrot_limits[0] = -0.0; zrot_limits[1] = 0.0;
+
+    populateBuffers();
+    setInitialTransformation();
+  }
+};
+
 class Wall : public Node {
   void setInitialTransformation() {
     glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));

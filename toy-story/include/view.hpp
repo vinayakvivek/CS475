@@ -39,6 +39,7 @@ class View {
   Buzz *buzz;
   Floor *floor;
   Walls *walls;
+  Ceiling *ceiling;
 
   /**
    *  0 -> Buzz
