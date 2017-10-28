@@ -2,7 +2,7 @@
 #include "shader_util.hpp"
 #include "view.hpp"
 
-GLfloat half_width = 400, half_height = 400, half_depth = 1000;
+GLfloat half_width = 800, half_height = 800, half_depth = 1000;
 View *v;
 
 void initView() {
@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // ! Create a windowed mode window and its OpenGL context
-  window = glfwCreateWindow(half_width * 2, half_height * 2, "Toy story", NULL, NULL);
+  window = glfwCreateWindow(800, 800, "Toy story", NULL, NULL);
   if (!window) {
     glfwTerminate();
     return -1;

@@ -4,6 +4,7 @@
 #include "gl_framework.hpp"
 #include "shader_util.hpp"
 #include "buzz.hpp"
+#include "models.hpp"
 
 class View {
   // screen size
@@ -36,6 +37,8 @@ class View {
   GLuint lights_state[3];
 
   Buzz *buzz;
+  Floor *floor;
+  Walls *walls;
 
   /**
    *  0 -> Buzz
