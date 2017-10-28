@@ -193,7 +193,7 @@ class BuzzRightUpperArm : public Node {
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -180.0; xrot_limits[1] = 40.0;
-    yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
+    yrot_limits[0] = -150.0; yrot_limits[1] = 0.0;
     zrot_limits[0] = -0.0; zrot_limits[1] = 180.0;
 
     populateBuffers();
@@ -398,6 +398,7 @@ class Buzz {
 
   Node *right_thigh;
   Node *right_leg;
+  Node *right_foot;
 
   int curr_selected_node;
  public:
@@ -422,7 +423,7 @@ class Buzz {
 
     right_thigh = new BuzzRightThigh("buzz_right_thigh", 12, shaderProgram, hip);
     right_leg = new BuzzLeg("buzz_right_leg", 13, shaderProgram, right_thigh);
-
+    right_foot = new BuzzFoot("buzz_right_foot", 15, shaderProgram, right_leg);
 
     hip->addChild(torso);
     hip->addChild(left_thigh);
@@ -443,12 +444,17 @@ class Buzz {
     left_leg->addChild(left_foot);
 
     right_thigh->addChild(right_leg);
+    right_leg->addChild(right_foot);
 
     curr_selected_node = 0;
 
     left_lower_arm->rotate(0, -120.0f);
     left_upper_arm->rotate(1, 90.0f);
     left_upper_arm->rotate(2, -60.0f);
+
+    right_lower_arm->rotate(0, -120.0f);
+    right_upper_arm->rotate(1, -90.0f);
+    right_upper_arm->rotate(2, 60.0f);
 
     left_thigh->rotate(0, -5.0f);
     left_thigh->rotate(2, -5.0f);
@@ -458,6 +464,7 @@ class Buzz {
     right_thigh->rotate(0, -5.0f);
     right_thigh->rotate(2, 5.0f);
     right_leg->rotate(0, 5.0f);
+    right_foot->rotate(2, -5.0f);
   }
 
   void render() {
@@ -481,6 +488,7 @@ class Buzz {
 
     right_thigh->render();
     right_leg->render();
+    right_foot->render();
   }
 
   void rotate(GLuint axis, GLfloat angle) {
@@ -531,7 +539,7 @@ class Buzz {
         left_foot->rotate(axis, angle);
         break;
       case 15:
-        // right_foot->rotate(axis, angle);
+        right_foot->rotate(axis, angle);
         break;
     }
   }
