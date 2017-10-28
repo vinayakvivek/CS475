@@ -2,6 +2,7 @@
 #include "view.hpp"
 
 extern View *v;
+extern GLfloat half_width, half_height, half_depth;
 
 namespace toys {
 
@@ -30,6 +31,16 @@ namespace toys {
   void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     // !Resize the view port to fit the window size - draw to entire window
     glViewport(0, 0, width, height);
+
+    #ifdef __APPLE__
+      half_width = width / 4;
+      half_height = height / 4;
+    #elif __linux__
+      half_width = width / 2;
+      half_height = height / 2;
+    #endif
+
+    v->updateView(half_width, half_height);
   }
 
   // !GLFW keyboard callback
@@ -37,6 +48,8 @@ namespace toys {
     // !Close the window if the ESC key was pressed
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
       glfwSetWindowShouldClose(window, GL_TRUE);
+    else if (key == GLFW_KEY_P && action == GLFW_PRESS)
+      v->togglePerspective();
 
     switch (key) {
       // rotation
@@ -65,11 +78,11 @@ namespace toys {
         break;
 
       case GLFW_KEY_Z:
-        v->zoom(5);
+        v->zoom(20);
         break;
 
       case GLFW_KEY_X:
-        v->zoom(-5);
+        v->zoom(-20);
         break;
 
       // model rotation

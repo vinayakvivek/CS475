@@ -12,7 +12,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   enable_perspective = true;
 
   light_positions[0] = glm::vec4(400.0, 400.0, 400.0, 1.0);
-  light_positions[1] = glm::vec4(-400.0, -400.0, -400.0, 1.0);
+  light_positions[1] = glm::vec4(-4000.0, -0.0, -4000.0, 1.0);
 
   spotlight_position[0] = glm::vec4(0.0, 1000.0, 0.0, 1.0);
   spotlight_position[1] = glm::vec4(0.0, 0.0, 0.0, 1.0);
@@ -28,6 +28,17 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   floor = new Floor("floor", 0, shaderProgram, NULL);
   walls = new Walls(shaderProgram);
   curr_selected_model = 0;
+}
+
+void View::updateView(GLfloat h_width, GLfloat h_height) {
+  half_width = h_width;
+  half_height = h_height;
+  updateCamera();
+}
+
+void View::togglePerspective() {
+  enable_perspective = !enable_perspective;
+  updateCamera();
 }
 
 void View::initShadersGL() {
@@ -76,7 +87,7 @@ void View::updateCamera() {
 
   // creating the projection matrix
   if (enable_perspective)
-    projection_matrix = glm::frustum(-100.0f, 100.0f, -100.0f, 100.0f, 100.0f, -half_depth);
+    projection_matrix = glm::frustum(-half_width / 4, half_width / 4, -half_height / 4, half_height / 4, 100.0f, -half_depth);
     // projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 50.0f, 250.0f);
   else
     projection_matrix = glm::ortho(-half_width, half_width,

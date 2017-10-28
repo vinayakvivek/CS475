@@ -58,6 +58,9 @@ class View {
   void selectModel(int model_id);
   void rotateNode(GLuint axis, GLfloat angle);
   void selectNode(int node_id);
+
+  void togglePerspective();
+  void updateView(GLfloat h_width, GLfloat h_height);
 };
 
 #endif  // VIEW_HPP_

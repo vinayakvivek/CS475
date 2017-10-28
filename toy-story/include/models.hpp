@@ -5,7 +5,7 @@
 #include "texture_util.hpp"
 
 #define FLOOR_LEVEL -415.0f
-#define WALL_HEIGHT 10000.0f
+#define WALL_HEIGHT 5000.0f
 #define FLOOR_LENGTH 5000.0f
 
 class Floor : public Node {
@@ -39,7 +39,7 @@ class Floor : public Node {
 
 class Wall : public Node {
   void setInitialTransformation() {
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 10.0f));
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI/2, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, FLOOR_LEVEL, FLOOR_LENGTH));
     glm::mat4 initial_transformation = translate * rotate * scale;
@@ -51,9 +51,9 @@ class Wall : public Node {
     std::string name,
     int id,
     const GLuint &shaderProgram,
-    Node *parent): Node(name, id, shaderProgram, parent) {
+    Node *parent, int wall_pos): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/wall.bmp", 512, 512);
+    tex = LoadTexture("../images/wall.bmp", 1024, 1024);
     data = cuboid(5, FLOOR_LENGTH, WALL_HEIGHT);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
@@ -64,22 +64,44 @@ class Wall : public Node {
 
     populateBuffers();
     setInitialTransformation();
+
+    glm::mat4 rotate;
+    switch (wall_pos) {
+      case 1:
+        rotate = glm::rotate(glm::mat4(1.0f), (float)PI / 2, glm::vec3(0.0f, 1.0f, 0.0f));
+        updateModelMatrix(rotate);
+        break;
+      case 2:
+        rotate = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(0.0f, 1.0f, 0.0f));
+        updateModelMatrix(rotate);
+        break;
+      case 3:
+        rotate = glm::rotate(glm::mat4(1.0f), -(float)PI/2, glm::vec3(0.0f, 1.0f, 0.0f));
+        updateModelMatrix(rotate);
+        break;
+    }
   }
 };
 
 class Walls {
   Node *wall_1;
   Node *wall_2;
+  Node *wall_3;
+  Node *wall_4;
+
  public:
   explicit Walls(GLuint shaderProgram) {
-    wall_1 = new Wall("wall_1", 0, shaderProgram, NULL);
-    wall_2 = new Wall("wall_2", 1, shaderProgram, NULL);
-
-    wall_2->rotate(1, 90);
+    wall_1 = new Wall("wall_1", 0, shaderProgram, NULL, 0);
+    wall_2 = new Wall("wall_2", 1, shaderProgram, NULL, 1);
+    wall_3 = new Wall("wall_2", 2, shaderProgram, NULL, 2);
+    wall_4 = new Wall("wall_2", 3, shaderProgram, NULL, 3);
   }
 
   void render() {
     wall_1->render();
+    wall_2->render();
+    wall_3->render();
+    wall_4->render();
   }
 };
 
