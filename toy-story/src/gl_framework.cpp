@@ -133,10 +133,18 @@ namespace toys {
         }
         break;
       case GLFW_KEY_4:
-        v->selectNode(4);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->selectNode(14);
+        } else {
+          v->selectNode(4);
+        }
         break;
       case GLFW_KEY_5:
-        v->selectNode(5);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->selectNode(15);
+        } else {
+          v->selectNode(5);
+        }
         break;
       case GLFW_KEY_6:
         v->selectNode(6);

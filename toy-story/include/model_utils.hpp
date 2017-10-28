@@ -30,4 +30,11 @@ VertexData* cylinder(GLfloat br, GLfloat tr, GLfloat h,
                      GLuint tesselation = 50,
                      bool closed = true);
 
+/**
+ * a <- half_length
+ * b <- half_breadth
+ * c <- height
+ */
+VertexData* cuboid(GLfloat a, GLfloat b, GLfloat c);
+
 #endif  // _MODEL_UTIL_HPP_

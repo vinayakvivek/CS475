@@ -349,6 +349,34 @@ class BuzzLeg : public Node {
   }
 };
 
+class BuzzFoot : public Node {
+  void setInitialTransformation() {
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 150.0f, 15.0f));
+    glm::mat4 initial_transformation = translate;
+    updateModelMatrix(initial_transformation);
+  }
+
+ public:
+  BuzzFoot(
+    std::string name,
+    int id,
+    const GLuint &shaderProgram,
+    Node *parent): Node(name, id, shaderProgram, parent) {
+
+    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    data = cuboid(32, 40, 15);
+    pivot_point = glm::vec4(0.0, 0.0, -20.0, 1.0);
+    std::cout << "num_vertices: " << data->num_vertices << "\n";
+
+    xrot_limits[0] = -10.0; xrot_limits[1] = 40.0;
+    yrot_limits[0] = -30.0; yrot_limits[1] = 30.0;
+    zrot_limits[0] = -5.0; zrot_limits[1] = 5.0;
+
+    populateBuffers();
+    setInitialTransformation();
+  }
+};
+
 class Buzz {
   Node *head;
   Node *torso;
@@ -366,6 +394,7 @@ class Buzz {
 
   Node *left_thigh;
   Node *left_leg;
+  Node *left_foot;
 
   Node *right_thigh;
   Node *right_leg;
@@ -389,9 +418,11 @@ class Buzz {
 
     left_thigh = new BuzzLeftThigh("buzz_left_thigh", 10, shaderProgram, hip);
     left_leg = new BuzzLeg("buzz_left_leg", 11, shaderProgram, left_thigh);
+    left_foot = new BuzzFoot("buzz_left_foot", 14, shaderProgram, left_leg);
 
     right_thigh = new BuzzRightThigh("buzz_right_thigh", 12, shaderProgram, hip);
     right_leg = new BuzzLeg("buzz_right_leg", 13, shaderProgram, right_thigh);
+
 
     hip->addChild(torso);
     hip->addChild(left_thigh);
@@ -409,6 +440,8 @@ class Buzz {
     right_lower_arm->addChild(right_hand);
 
     left_thigh->addChild(left_leg);
+    left_leg->addChild(left_foot);
+
     right_thigh->addChild(right_leg);
 
     curr_selected_node = 0;
@@ -420,6 +453,7 @@ class Buzz {
     left_thigh->rotate(0, -5.0f);
     left_thigh->rotate(2, -5.0f);
     left_leg->rotate(0, 5.0f);
+    left_foot->rotate(2, 5.0f);
 
     right_thigh->rotate(0, -5.0f);
     right_thigh->rotate(2, 5.0f);
@@ -443,6 +477,7 @@ class Buzz {
 
     left_thigh->render();
     left_leg->render();
+    left_foot->render();
 
     right_thigh->render();
     right_leg->render();
@@ -490,6 +525,13 @@ class Buzz {
         break;
       case 13:
         right_leg->rotate(axis, angle);
+        break;
+
+      case 14:
+        left_foot->rotate(axis, angle);
+        break;
+      case 15:
+        // right_foot->rotate(axis, angle);
         break;
     }
   }

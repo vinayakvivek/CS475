@@ -211,3 +211,161 @@ VertexData* cylinder(
 
   return data;
 }
+
+VertexData* cuboid(GLfloat a, GLfloat b, GLfloat c) {
+  std::vector<glm::vec4> vertices;
+  std::vector<glm::vec4> colors;
+  std::vector<glm::vec2> tex_coords;
+  std::vector<glm::vec4> normals;
+
+  glm::vec4 white_color(1.0f, 1.0f, 1.0f, 1.0f);
+
+  /*
+   (7)____(6)
+    |     |
+    |(3)__|__(2) ____ y = c
+    |__|__|  |
+  (4)  | (5) |
+       |_____|
+      (0)    (1) ---- y = 0
+
+  */
+
+  glm::vec4 positions[8] = {
+    glm::vec4(-a, 0.0f, b, 1.0f),
+    glm::vec4(a, 0.0f, b, 1.0f),
+    glm::vec4(a, c, b, 1.0f),
+    glm::vec4(-a, c, b, 1.0f),
+
+    glm::vec4(-a, 0.0f, -b, 1.0f),
+    glm::vec4(a, 0.0f, -b, 1.0f),
+    glm::vec4(a, c, -b, 1.0f),
+    glm::vec4(-a, c, -b, 1.0f)
+  };
+
+  glm::vec2 t_coords[4] = {
+    glm::vec2(0.0f, 0.0f),
+    glm::vec2(0.0f, 1.0f),
+    glm::vec2(1.0f, 1.0f),
+    glm::vec2(1.0f, 0.0f)
+  };
+
+  glm::vec4 nx(1.0f, 0.0f, 0.0f, 1.0f),
+            ny(0.0f, 1.0f, 0.0f, 1.0f),
+            nz(0.0f, 0.0f, 1.0f, 1.0f);
+
+  {
+    // front
+    vertices.push_back(positions[0]);
+    vertices.push_back(positions[1]);
+    vertices.push_back(positions[3]);
+
+    vertices.push_back(positions[3]);
+    vertices.push_back(positions[1]);
+    vertices.push_back(positions[2]);
+
+    for (int i = 0; i < 6; ++i) {
+      normals.push_back(nz);
+      colors.push_back(white_color);
+    }
+  }
+
+  {
+    // top
+    vertices.push_back(positions[3]);
+    vertices.push_back(positions[2]);
+    vertices.push_back(positions[7]);
+
+    vertices.push_back(positions[7]);
+    vertices.push_back(positions[2]);
+    vertices.push_back(positions[6]);
+
+    for (int i = 0; i < 6; ++i) {
+      normals.push_back(ny);
+      colors.push_back(white_color);
+    }
+  }
+
+  {
+    // right side
+    vertices.push_back(positions[1]);
+    vertices.push_back(positions[5]);
+    vertices.push_back(positions[2]);
+
+    vertices.push_back(positions[2]);
+    vertices.push_back(positions[5]);
+    vertices.push_back(positions[6]);
+
+    for (int i = 0; i < 6; ++i) {
+      normals.push_back(nx);
+      colors.push_back(white_color);
+    }
+  }
+
+  {
+    // left side
+    vertices.push_back(positions[4]);
+    vertices.push_back(positions[0]);
+    vertices.push_back(positions[7]);
+
+    vertices.push_back(positions[7]);
+    vertices.push_back(positions[0]);
+    vertices.push_back(positions[3]);
+
+    for (int i = 0; i < 6; ++i) {
+      normals.push_back(-nx);
+      colors.push_back(white_color);
+    }
+  }
+
+  {
+    // bottom side
+    vertices.push_back(positions[4]);
+    vertices.push_back(positions[5]);
+    vertices.push_back(positions[0]);
+
+    vertices.push_back(positions[0]);
+    vertices.push_back(positions[5]);
+    vertices.push_back(positions[1]);
+
+    for (int i = 0; i < 6; ++i) {
+      normals.push_back(-ny);
+      colors.push_back(white_color);
+    }
+  }
+
+  {
+    // back side
+    vertices.push_back(positions[5]);
+    vertices.push_back(positions[4]);
+    vertices.push_back(positions[6]);
+
+    vertices.push_back(positions[6]);
+    vertices.push_back(positions[4]);
+    vertices.push_back(positions[7]);
+
+    for (int i = 0; i < 6; ++i) {
+      normals.push_back(-nz);
+      colors.push_back(white_color);
+    }
+  }
+
+
+  for (int i = 0; i < 6; ++i) {
+    tex_coords.push_back(t_coords[0]);
+    tex_coords.push_back(t_coords[1]);
+    tex_coords.push_back(t_coords[3]);
+    tex_coords.push_back(t_coords[3]);
+    tex_coords.push_back(t_coords[1]);
+    tex_coords.push_back(t_coords[2]);
+  }
+
+  VertexData *data = new VertexData;
+  data->num_vertices = vertices.size();
+  data->vertices = &vertices[0];
+  data->colors = &colors[0];
+  data->tex_coords = &tex_coords[0];
+  data->normals = &normals[0];
+
+  return data;
+}
