@@ -105,13 +105,25 @@ namespace toys {
 
       // select node
       case GLFW_KEY_0:
-        v->selectNode(0);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->selectNode(10);
+        } else {
+          v->selectNode(0);
+        }
         break;
       case GLFW_KEY_1:
-        v->selectNode(1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->selectNode(11);
+        } else {
+          v->selectNode(1);
+        }
         break;
       case GLFW_KEY_2:
-        v->selectNode(2);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->selectNode(12);
+        } else {
+          v->selectNode(2);
+        }
         break;
       case GLFW_KEY_3:
         v->selectNode(3);
