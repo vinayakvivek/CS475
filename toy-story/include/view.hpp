@@ -3,7 +3,7 @@
 
 #include "gl_framework.hpp"
 #include "shader_util.hpp"
-#include "models.hpp"
+#include "buzz.hpp"
 
 class View {
   // screen size

@@ -1,5 +1,5 @@
-#ifndef MODELS_HPP_
-#define MODELS_HPP_
+#ifndef BUZZ_HPP_
+#define BUZZ_HPP_
 
 #include "node.hpp"
 #include "texture_util.hpp"
@@ -549,4 +549,4 @@ class Buzz {
   }
 };
 
-#endif  // MODELS_HPP_
+#endif  // BUZZ_HPP_
