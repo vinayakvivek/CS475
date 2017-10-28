@@ -206,6 +206,9 @@ class BuzzRightUpperArm : public Node {
 
 class BuzzLowerArm : public Node {
   void setInitialTransformation() {
+    local_matrix = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(0.0f, 1.0f, 0.0f));
+    updateModelMatrix(local_matrix);
+
     glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 150.0f, 0.0f));
     glm::mat4 initial_transformation = translate;
     updateModelMatrix(initial_transformation);
@@ -218,7 +221,7 @@ class BuzzLowerArm : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    tex = LoadTexture("../images/buzz/right_lower_hand.bmp", 1024, 1024);
     data = cylinder(20, 15, 130);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
@@ -287,7 +290,7 @@ class BuzzLeftThigh : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    tex = LoadTexture("../images/buzz/thigh.bmp", 1024, 1024);
     data = cylinder(40, 30, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
@@ -319,7 +322,7 @@ class BuzzRightThigh : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    tex = LoadTexture("../images/buzz/thigh.bmp", 1024, 1024);
     data = cylinder(40, 30, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
@@ -347,7 +350,7 @@ class BuzzLeg : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    tex = LoadTexture("../images/buzz/leg.bmp", 1024, 1024);
     data = cylinder(30, 40, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
