@@ -14,7 +14,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   light_positions[0] = glm::vec4(400.0, 400.0, 400.0, 1.0);
   light_positions[1] = glm::vec4(-4000.0, (FLOOR_LEVEL + WALL_HEIGHT) / 2, -4000.0, 1.0);
 
-  spotlight_position[0] = glm::vec4(0.0, (FLOOR_LEVEL + WALL_HEIGHT) - 400.0f, 0.0, 1.0);
+  spotlight_position[0] = glm::vec4(0.0, (FLOOR_LEVEL + WALL_HEIGHT) - 1000.0f, -1000.0f, 1.0);
   spotlight_position[1] = glm::vec4(0.0, 0.0, -0.0, 1.0);
 
   lights_state[0] = 1;
@@ -28,6 +28,9 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   floor = new Floor("floor", 0, shaderProgram, NULL);
   walls = new Walls(shaderProgram);
   ceiling = new Ceiling("ceiling", 0, shaderProgram, NULL);
+  bulb = new Bulb("bulb", 0, shaderProgram, NULL);
+  bulb->translate(glm::vec3(spotlight_position[0]));
+
   curr_selected_model = 0;
 }
 
@@ -73,6 +76,7 @@ void View::renderGL() {
   floor->render();
   walls->render();
   ceiling->render();
+  bulb->render();
 }
 
 void View::updateCamera() {

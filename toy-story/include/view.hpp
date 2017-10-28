@@ -40,6 +40,7 @@ class View {
   Floor *floor;
   Walls *walls;
   Ceiling *ceiling;
+  Bulb *bulb;
 
   /**
    *  0 -> Buzz

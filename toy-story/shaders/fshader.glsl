@@ -94,26 +94,33 @@ void main () {
     vec3 lightVector = lightPosition.xyz - position.xyz;
     // optional: attenuation
     float dist = length(lightVector);
-    float attenuation = 1.0 / (1.0 + 0.00001 * dist + 0.0000001 * dist * dist);
 
-    lightVector = normalize(lightVector);
+    if (dist < 100) {
+      // part of spotlight
+      intensity = vec4(1.0f);
+      base_color = vec4(1.0f);
+    } else {
+      float attenuation = 1.0 / (1.0 + 0.00001 * dist + 0.0000001 * dist * dist);
 
-    diffuseIntensity = max(0.0, dot(norm, lightVector));
-    // out_color += base_color * diffuse * nxDir;
+      lightVector = normalize(lightVector);
 
-    vec4 cameraPosition = uCameraPosition;
+      diffuseIntensity = max(0.0, dot(norm, lightVector));
+      // out_color += base_color * diffuse * nxDir;
 
-    if (diffuseIntensity > 0.0) {
-      vec3 cameraVector = normalize(cameraPosition.xyz - position.xyz);
-      vec3 halfVector = normalize(lightVector + cameraVector);
-      specularIntensity = pow(max(0.0, dot(norm, halfVector)), shininess);
+      vec4 cameraPosition = uCameraPosition;
+
+      if (diffuseIntensity > 0.0) {
+        vec3 cameraVector = normalize(cameraPosition.xyz - position.xyz);
+        vec3 halfVector = normalize(lightVector + cameraVector);
+        specularIntensity = pow(max(0.0, dot(norm, halfVector)), shininess);
+      }
+
+      vec3 spotlightDir = normalize(uSpotLightPosition[0].xyz - uSpotLightPosition[1].xyz);
+      float cos_theta = dot(spotlightDir, lightVector);
+
+      if (cos_theta > 0.9)
+        intensity += (diffuse * diffuseIntensity + specular * specularIntensity) * attenuation;
     }
-
-    vec3 spotlightDir = normalize(uSpotLightPosition[0].xyz - uSpotLightPosition[1].xyz);
-    float cos_theta = dot(spotlightDir, lightVector);
-
-    if (cos_theta > 0.9)
-      intensity += (diffuse * diffuseIntensity + specular * specularIntensity) * attenuation;
   }
 
   intensity += ambient;

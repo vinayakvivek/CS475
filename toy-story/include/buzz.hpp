@@ -87,7 +87,7 @@ class BuzzTorso : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    tex = LoadTexture("../images/buzz/suit3.bmp", 1024, 330);
     data = cylinder(60, 100, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
@@ -155,7 +155,7 @@ class BuzzLeftUpperArm : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/right_hand.bmp", 1024, 1024);
+    tex = LoadTexture("../images/buzz/left_hand.bmp", 1024, 1024);
     data = cylinder(30, 20, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";

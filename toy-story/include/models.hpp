@@ -8,6 +8,36 @@
 #define WALL_HEIGHT 5000.0f
 #define FLOOR_LENGTH 5000.0f
 
+class Bulb : public Node {
+  void setInitialTransformation() {
+  }
+
+ public:
+  Bulb(
+    std::string name,
+    int id,
+    const GLuint &shaderProgram,
+    Node *parent): Node(name, id, shaderProgram, parent) {
+
+    tex = LoadTexture("../images/floor.bmp", 512, 512);
+    data = cylinder(100, 100, 50);
+    pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
+    std::cout << "num_vertices: " << data->num_vertices << "\n";
+
+    xrot_limits[0] = -0.0; xrot_limits[1] = 0.0;
+    yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
+    zrot_limits[0] = -0.0; zrot_limits[1] = 0.0;
+
+    populateBuffers();
+    setInitialTransformation();
+  }
+
+  void translate(const glm::vec3 &trans) {
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), trans);
+    updateModelMatrix(translate);
+  }
+};
+
 class Floor : public Node {
   void setInitialTransformation() {
     glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
