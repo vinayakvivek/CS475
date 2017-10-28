@@ -126,7 +126,11 @@ namespace toys {
         }
         break;
       case GLFW_KEY_3:
-        v->selectNode(3);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->selectNode(13);
+        } else {
+          v->selectNode(3);
+        }
         break;
       case GLFW_KEY_4:
         v->selectNode(4);

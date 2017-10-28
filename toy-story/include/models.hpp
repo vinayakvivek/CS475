@@ -289,6 +289,38 @@ class BuzzLeftThigh : public Node {
   }
 };
 
+class BuzzRightThigh : public Node {
+  void setInitialTransformation() {
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(40.0f, 0.0f, 0.0f));
+    glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(0.0f, 1.0f, 0.0f));
+    rotate = glm::rotate(rotate, (float)PI, glm::vec3(1.0f, 0.0f, 0.0f));
+
+    glm::mat4 initial_transformation = translate * scale * rotate;
+    updateModelMatrix(initial_transformation);
+  }
+
+ public:
+  BuzzRightThigh(
+    std::string name,
+    int id,
+    const GLuint &shaderProgram,
+    Node *parent): Node(name, id, shaderProgram, parent) {
+
+    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    data = cylinder(40, 30, 150);
+    pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
+    std::cout << "num_vertices: " << data->num_vertices << "\n";
+
+    xrot_limits[0] = -80.0; xrot_limits[1] = 50.0;
+    yrot_limits[0] = 0.0; yrot_limits[1] = 150.0;
+    zrot_limits[0] = 0.0; zrot_limits[1] = 80.0;
+
+    populateBuffers();
+    setInitialTransformation();
+  }
+};
+
 class BuzzLeg : public Node {
   void setInitialTransformation() {
     glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 150.0f, 0.0f));
@@ -335,6 +367,9 @@ class Buzz {
   Node *left_thigh;
   Node *left_leg;
 
+  Node *right_thigh;
+  Node *right_leg;
+
   int curr_selected_node;
  public:
   explicit Buzz(GLuint shaderProgram) {
@@ -355,8 +390,12 @@ class Buzz {
     left_thigh = new BuzzLeftThigh("buzz_left_thigh", 10, shaderProgram, hip);
     left_leg = new BuzzLeg("buzz_left_leg", 11, shaderProgram, left_thigh);
 
+    right_thigh = new BuzzRightThigh("buzz_right_thigh", 12, shaderProgram, hip);
+    right_leg = new BuzzLeg("buzz_right_leg", 13, shaderProgram, right_thigh);
+
     hip->addChild(torso);
     hip->addChild(left_thigh);
+    hip->addChild(right_thigh);
     neck->addChild(head);
 
     torso->addChild(neck);
@@ -370,6 +409,7 @@ class Buzz {
     right_lower_arm->addChild(right_hand);
 
     left_thigh->addChild(left_leg);
+    right_thigh->addChild(right_leg);
 
     curr_selected_node = 0;
 
@@ -380,6 +420,10 @@ class Buzz {
     left_thigh->rotate(0, -5.0f);
     left_thigh->rotate(2, -5.0f);
     left_leg->rotate(0, 5.0f);
+
+    right_thigh->rotate(0, -5.0f);
+    right_thigh->rotate(2, 5.0f);
+    right_leg->rotate(0, 5.0f);
   }
 
   void render() {
@@ -399,6 +443,9 @@ class Buzz {
 
     left_thigh->render();
     left_leg->render();
+
+    right_thigh->render();
+    right_leg->render();
   }
 
   void rotate(GLuint axis, GLfloat angle) {
@@ -436,6 +483,13 @@ class Buzz {
         break;
       case 11:
         left_leg->rotate(axis, angle);
+        break;
+
+      case 12:
+        right_thigh->rotate(axis, angle);
+        break;
+      case 13:
+        right_leg->rotate(axis, angle);
         break;
     }
   }
