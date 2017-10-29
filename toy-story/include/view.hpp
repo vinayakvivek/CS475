@@ -3,7 +3,8 @@
 
 #include "gl_framework.hpp"
 #include "shader_util.hpp"
-#include "buzz.hpp"
+#include "buzz_model.hpp"
+#include "hamm_model.hpp"
 #include "models.hpp"
 
 class View {
@@ -37,6 +38,8 @@ class View {
   GLuint lights_state[3];
 
   Buzz *buzz;
+  Hamm *hamm;
+
   Floor *floor;
   Walls *walls;
   Ceiling *ceiling;
@@ -44,7 +47,7 @@ class View {
 
   /**
    *  0 -> Buzz
-   *  1 -> Rex
+   *  1 -> Hamm
    */
   int curr_selected_model;
 

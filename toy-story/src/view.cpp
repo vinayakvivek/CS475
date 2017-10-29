@@ -5,7 +5,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   half_height = h_height;
   half_depth = h_depth;
 
-  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 600.0;
+  c_xpos = 700.0; c_ypos = 0.0; c_zpos = 200.0;
   c_up_x = 0.0; c_up_y = 1.0; c_up_z = 0.0;
   c_xrot = 0.0; c_yrot = 0.0; c_zrot = 0.0;
 
@@ -24,14 +24,16 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   initShadersGL();
 
   updateCamera();
-  buzz = new Buzz(shaderProgram);
+  // buzz = new Buzz(shaderProgram);
+  hamm = new Hamm(shaderProgram);
+
   floor = new Floor("floor", 0, shaderProgram, NULL);
   walls = new Walls(shaderProgram);
   ceiling = new Ceiling("ceiling", 0, shaderProgram, NULL);
   bulb = new Bulb("bulb", 0, shaderProgram, NULL);
   bulb->translate(glm::vec3(spotlight_position[0]));
 
-  curr_selected_model = 0;
+  curr_selected_model = 1;
 }
 
 void View::updateView(GLfloat h_width, GLfloat h_height) {
@@ -72,7 +74,9 @@ void View::renderGL() {
   glUniform1uiv(u_lights_state, 3, &lights_state[0]);
   glUniformMatrix4fv(u_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 
-  buzz->render();
+  // buzz->render();
+  hamm->render();
+
   floor->render();
   walls->render();
   ceiling->render();
@@ -138,6 +142,9 @@ void View::rotateNode(GLuint axis, GLfloat angle) {
       // Buzz Light-year
       buzz->rotate(axis, angle);
       break;
+    case 1:
+      // Hamm
+      hamm->rotate(axis, angle);
   }
 }
 
@@ -147,6 +154,9 @@ void View::selectNode(int node_id) {
       // Buzz Light-year
       buzz->selectNode(node_id);
       break;
+    case 1:
+      // Hamm
+      hamm->selectNode(node_id);
   }
 }
 

@@ -18,8 +18,8 @@ void main () {
   vec4 intensity = vec4(0.0);
 
   // Defining material properties
-  vec4 diffuse = vec4(1.0, 1.0, 0.0, 1.0);
-  vec4 ambient = vec4(0.1, 0.0, 0.1, 1.0);
+  vec4 diffuse = vec4(1.0, 1.0, 1.0, 1.0);
+  vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);
   vec4 specular = vec4(1.0, 1.0, 1.0, 1.0);
   float shininess = 5.0;
   vec4 spec = vec4(0.0);
