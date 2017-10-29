@@ -4,8 +4,9 @@
 class HammHead : public Node {
   void setInitialTransformation() {
     glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)(PI/2 + PI/3), glm::vec3(0.0f, 0.0f, 1.0f));
 
-    local_matrix = scale;
+    local_matrix = glm::rotate(glm::mat4(1.0f), -(float)PI/2, glm::vec3(0.0f, 1.0f, 0.0f)) * rotate * scale;
     updateModelMatrix(local_matrix);
 
     glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, 100.0f, 300.0f));
@@ -20,7 +21,7 @@ class HammHead : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/hamm/pink.bmp", 256, 256);
+    tex = LoadTexture("../images/hamm/head.bmp", 256, 256);
     data = sphere(150, 30, 30);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
@@ -41,9 +42,9 @@ class HammTorso : public Node {
     local_matrix = scale;
     updateModelMatrix(local_matrix);
 
-    // glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, 200 * 1.3 * 0.25 + 20.0f, 0.0f));
-    // glm::mat4 initial_transformation = translate;
-    // updateModelMatrix(initial_transformation);
+    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(350.0f, -150.0f, -100.0f));
+    glm::mat4 initial_transformation = translate * glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f));
+    updateModelMatrix(initial_transformation);
   }
 
  public:
@@ -74,7 +75,7 @@ class HammNose : public Node {
     local_matrix = scale;
     updateModelMatrix(local_matrix);
 
-    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, 130.0f, 0.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, 100.0f, 0.0f));
     glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), (float)PI/2, glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 initial_transformation = rotate * translate;
     updateModelMatrix(initial_transformation);
@@ -88,7 +89,7 @@ class HammNose : public Node {
     Node *parent): Node(name, id, shaderProgram, parent) {
 
     tex = LoadTexture("../images/hamm/pink.bmp", 256, 256);
-    data = cylinder(70, 50, 50);
+    data = cylinder(100, 50, 100);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 

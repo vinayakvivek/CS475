@@ -5,7 +5,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   half_height = h_height;
   half_depth = h_depth;
 
-  c_xpos = 700.0; c_ypos = 0.0; c_zpos = 200.0;
+  c_xpos = 0.0; c_ypos = 0.0; c_zpos = 700.0;
   c_up_x = 0.0; c_up_y = 1.0; c_up_z = 0.0;
   c_xrot = 0.0; c_yrot = 0.0; c_zrot = 0.0;
 
@@ -24,7 +24,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   initShadersGL();
 
   updateCamera();
-  // buzz = new Buzz(shaderProgram);
+  buzz = new Buzz(shaderProgram);
   hamm = new Hamm(shaderProgram);
 
   floor = new Floor("floor", 0, shaderProgram, NULL);
@@ -74,7 +74,7 @@ void View::renderGL() {
   glUniform1uiv(u_lights_state, 3, &lights_state[0]);
   glUniformMatrix4fv(u_view_matrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
 
-  // buzz->render();
+  buzz->render();
   hamm->render();
 
   floor->render();
