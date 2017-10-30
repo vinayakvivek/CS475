@@ -42,4 +42,4 @@
 - If you have selected `0`th node in a model (select model, press `0`), then the model can be translated by pressing `SHIFT` + [`A`, `D`, `Q`, `E`]
 - Camera can be rotated using `ARROW` keys, `PAGE UP` and `PAGE DOWN`.
 - Camera can be translated using `SHIFT` + [`ARROW` keys, `PAGE UP`, `PAGE DOWN`].
-  
+- Use `Z` and `X` to zoom in and out camera respectively.
