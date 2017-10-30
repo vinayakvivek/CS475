@@ -15,6 +15,8 @@ Node::Node(
   yrot_limits[0] = yrot_limits[1] = 0.0;
   zrot_limits[0] = zrot_limits[1] = 0.0;
 
+  translatable = false;
+
   local_matrix = glm::mat4(1.0f);
   model_matrix = glm::mat4(1.0f);
   normal_matrix = glm::mat4(1.0f);
@@ -147,4 +149,32 @@ void Node::rotate(GLuint axis, GLfloat angle) {
   rot_matrix = model_matrix * glm::inverse(local_matrix) * rot_matrix * local_matrix * glm::inverse(model_matrix);
 
   updateModelMatrix(rot_matrix);
+}
+
+void Node::translate(GLuint axis, GLfloat d) {
+  if (!translatable)
+    return;
+
+  glm::mat4 trans_matrix(1.0f);
+
+  switch (axis) {
+    case 0:
+      // X axis
+      xpos += d;
+      trans_matrix = glm::translate(trans_matrix, glm::vec3(d, 0.0, 0.0));
+      break;
+    case 1:
+      // Y axis
+      // ypos += d;
+      // trans_matrix = glm::translate(trans_matrix, glm::vec3(0.0, d, 0.0));
+      break;
+    case 2:
+      // Z axis
+      zpos += d;
+      trans_matrix = glm::translate(trans_matrix, glm::vec3(0.0, 0.0, d));
+      break;
+  }
+
+  trans_matrix = model_matrix * glm::inverse(local_matrix) * trans_matrix * local_matrix * glm::inverse(model_matrix);
+  updateModelMatrix(trans_matrix);
 }

@@ -62,6 +62,7 @@ class View {
   void toggleLight(int light_id);
   void selectModel(int model_id);
   void rotateNode(GLuint axis, GLfloat angle);
+  void translateNode(GLuint axis, GLfloat d);
   void selectNode(int node_id);
 
   void togglePerspective();

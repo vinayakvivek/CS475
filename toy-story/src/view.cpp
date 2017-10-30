@@ -148,6 +148,18 @@ void View::rotateNode(GLuint axis, GLfloat angle) {
   }
 }
 
+void View::translateNode(GLuint axis, GLfloat d) {
+  switch (curr_selected_model) {
+    case 0:
+      // Buzz Light-year
+      buzz->translate(axis, d);
+      break;
+    case 1:
+      // Hamm
+      hamm->translate(axis, d);
+  }
+}
+
 void View::selectNode(int node_id) {
   switch (curr_selected_model) {
     case 0:

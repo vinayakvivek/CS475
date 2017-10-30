@@ -99,19 +99,35 @@ namespace toys {
         break;
 
       case GLFW_KEY_A:
-        v->rotateNode(0, 1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->translateNode(0, 10);
+        } else {
+          v->rotateNode(0, 1);
+        }
         break;
 
       case GLFW_KEY_D:
-        v->rotateNode(0, -1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->translateNode(0, -10);
+        } else {
+          v->rotateNode(0, -1);
+        }
         break;
 
       case GLFW_KEY_Q:
-        v->rotateNode(2, 1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->translateNode(2, 10);
+        } else {
+          v->rotateNode(2, 1);
+        }
         break;
 
       case GLFW_KEY_E:
-        v->rotateNode(2, -1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+          v->translateNode(2, -10);
+        } else {
+          v->rotateNode(2, -1);
+        }
         break;
 
       // select model

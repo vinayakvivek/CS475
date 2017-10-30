@@ -63,6 +63,8 @@ class HammTorso : public Node {
     yrot_limits[0] = -100.0; yrot_limits[1] = 100.0;
     // zrot_limits[0] = -1000.0; zrot_limits[1] = 1000.0;
 
+    translatable = true;
+
     populateBuffers();
     setInitialTransformation();
   }
@@ -143,6 +145,10 @@ class Hamm {
         head->rotate(axis, angle);
         break;
     }
+  }
+
+  void translate(GLuint axis, GLfloat d) {
+    torso->translate(axis, d);
   }
 
   void selectNode(int nodeId) {

@@ -50,6 +50,8 @@ class Node {
   glm::mat4 normal_matrix;
 
   GLfloat xpos, ypos, zpos;
+  bool translatable;
+
   GLfloat xrot, yrot, zrot;
   GLfloat xrot_limits[2], yrot_limits[2], zrot_limits[2];
 
@@ -69,7 +71,7 @@ class Node {
     Node *parent);
   void addChild(Node *node);
   virtual void rotate(GLuint axis, GLfloat angle);
-  void translate(const glm::vec3 &trans);
+  virtual void translate(GLuint axis, GLfloat d);
   void updateModelMatrix(const glm::mat4 &transformation);
   void render();
 

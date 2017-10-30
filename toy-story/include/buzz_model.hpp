@@ -109,7 +109,7 @@ class BuzzHip : public Node {
     local_matrix *= scale * rotate;
     updateModelMatrix(local_matrix);
 
-    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, -100.0f, 0.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -100.0f, 0.0f));
     glm::mat4 initial_transformation = translate;
     updateModelMatrix(initial_transformation);
   }
@@ -130,6 +130,8 @@ class BuzzHip : public Node {
     yrot_limits[0] = -90.0; yrot_limits[1] = 90.0;
     // zrot_limits[0] = -50.0; zrot_limits[1] = 50.0;
 
+    translatable = true;
+
     populateBuffers();
     setInitialTransformation();
   }
@@ -141,6 +143,8 @@ class BuzzHip : public Node {
       yrot_limits[1] += angle;
     }
   }
+
+
 };
 
 class BuzzLeftUpperArm : public Node {
@@ -565,6 +569,10 @@ class Buzz {
         right_foot->rotate(axis, angle);
         break;
     }
+  }
+
+  void translate(GLuint axis, GLfloat d) {
+    hip->translate(axis, d);
   }
 
   void selectNode(int nodeId) {
