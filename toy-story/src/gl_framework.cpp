@@ -46,39 +46,62 @@ namespace toys {
   // !GLFW keyboard callback
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     // !Close the window if the ESC key was pressed
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
       glfwSetWindowShouldClose(window, GL_TRUE);
-    else if (key == GLFW_KEY_P && action == GLFW_PRESS)
+      return;
+    } else if (key == GLFW_KEY_P && action == GLFW_PRESS) {
       v->togglePerspective();
-    else if (key == GLFW_KEY_B && action == GLFW_PRESS)
+      return;
+    } else if (key == GLFW_KEY_B && action == GLFW_PRESS) {
       v->selectModel(0);  // select buzz
-    else if (key == GLFW_KEY_H && action == GLFW_PRESS)
+      return;
+    } else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
       v->selectModel(1);  // select Hamm
+      return;
+    }
 
     switch (key) {
       // rotation
       case GLFW_KEY_UP:
-        v->rotateCamera(1, 1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+          v->translateCamera(1, 20);
+        else
+          v->rotateCamera(1, 1);
         break;
 
       case GLFW_KEY_DOWN:
-        v->rotateCamera(1, -1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+          v->translateCamera(1, -20);
+        else
+          v->rotateCamera(1, -1);
         break;
 
       case GLFW_KEY_LEFT:
-        v->rotateCamera(0, 1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+          v->translateCamera(0, 20);
+        else
+          v->rotateCamera(0, 1);
         break;
 
       case GLFW_KEY_RIGHT:
-        v->rotateCamera(0, -1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+          v->translateCamera(0, -20);
+        else
+          v->rotateCamera(0, -1);
         break;
 
       case GLFW_KEY_PAGE_UP:
-        v->rotateCamera(2, 1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+          v->translateCamera(2, 20);
+        else
+          v->rotateCamera(2, 1);
         break;
 
       case GLFW_KEY_PAGE_DOWN:
-        v->rotateCamera(2, -1);
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+          v->translateCamera(0, -20);
+        else
+          v->rotateCamera(2, -1);
         break;
 
       case GLFW_KEY_Z:

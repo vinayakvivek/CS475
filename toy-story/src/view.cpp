@@ -14,7 +14,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   light_positions[0] = glm::vec4(400.0, 400.0, 400.0, 1.0);
   light_positions[1] = glm::vec4(-4000.0, (FLOOR_LEVEL + WALL_HEIGHT) / 2, -4000.0, 1.0);
 
-  spotlight_position[0] = glm::vec4(0.0, (FLOOR_LEVEL + WALL_HEIGHT) - 1000.0f, -1000.0f, 1.0);
+  spotlight_position[0] = glm::vec4(0.0, (FLOOR_LEVEL + WALL_HEIGHT) - 1000.0f, 1000.0f, 1.0);
   spotlight_position[1] = glm::vec4(0.0, 0.0, -0.0, 1.0);
 
   lights_state[0] = 1;
@@ -33,7 +33,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
   bulb = new Bulb("bulb", 0, shaderProgram, NULL);
   bulb->translate(glm::vec3(spotlight_position[0]));
 
-  curr_selected_model = 1;
+  curr_selected_model = 0;
 }
 
 void View::updateView(GLfloat h_width, GLfloat h_height) {
@@ -120,6 +120,25 @@ void View::rotateCamera(GLuint axis, GLfloat angle) {
     case 2:
       // Z axis
       c_zrot += angle;
+      break;
+  }
+
+  updateCamera();
+}
+
+void View::translateCamera(GLuint axis, GLfloat d) {
+  switch (axis) {
+    case 0:
+      // X axis
+      c_xpos += d;
+      break;
+    case 1:
+      // Y axis
+      c_ypos += d;
+      break;
+    case 2:
+      // Z axis
+      c_zpos += d;
       break;
   }
 

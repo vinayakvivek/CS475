@@ -55,6 +55,7 @@ class View {
  public:
   View(GLfloat h_width, GLfloat h_height, GLfloat h_depth);
   void rotateCamera(GLuint axis, GLfloat angle);
+  void translateCamera(GLuint axis, GLfloat d);
   void zoom(GLfloat amount);
   void updateCamera();
   void renderGL();
