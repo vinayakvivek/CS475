@@ -43,7 +43,7 @@ class HammTorso : public Node {
     updateModelMatrix(local_matrix);
 
     glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(350.0f, -150.0f, -100.0f));
-    glm::mat4 initial_transformation = translate * glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f));
+    glm::mat4 initial_transformation = glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f));
     updateModelMatrix(initial_transformation);
   }
 
@@ -112,10 +112,85 @@ class HammNose : public Node {
   }
 };
 
+class HammLeg : public Node {
+  void setInitialTransformation() {
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+    local_matrix = scale;
+    updateModelMatrix(local_matrix);
+  }
+
+ public:
+  HammLeg(
+    std::string name,
+    int id,
+    const GLuint &shaderProgram,
+    Node *parent): Node(name, id, shaderProgram, parent) {
+
+    tex = LoadTexture("../images/hamm/pink.bmp", 256, 256);
+    data = cylinder(40, 30, 150);
+    pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
+    std::cout << "num_vertices: " << data->num_vertices << "\n";
+
+    xrot_limits[0] = -50.0; xrot_limits[1] = 50.0;
+    yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;
+    zrot_limits[0] = -50.0; zrot_limits[1] = 50.0;
+
+    populateBuffers();
+    setInitialTransformation();
+
+    glm::mat4 t = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, -260.0f, 0.0f));
+    glm::mat4 rz;
+    glm::mat4 rx;
+    glm::mat4 r;
+    glm::mat4 initial_transformation;
+
+    switch (id) {
+      case 3:
+        // front left
+        rz = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(0.0f, 0.0f, 1.0f));
+        rx = glm::rotate(glm::mat4(1.0f), -(float)PI/4, glm::vec3(1.0f, 0.0f, 0.0f));
+        r = glm::rotate(glm::mat4(1.0f), (float)PI/8, glm::vec3(0.0f, 1.0f, 1.0f));
+        initial_transformation = r * rx * t * rz;
+        updateModelMatrix(initial_transformation);
+        break;
+      case 4:
+        // front right
+        rz = glm::rotate(glm::mat4(1.0f), -(float)PI, glm::vec3(0.0f, 0.0f, 1.0f));
+        rx = glm::rotate(glm::mat4(1.0f), -(float)PI/4, glm::vec3(1.0f, 0.0f, 0.0f));
+        r = glm::rotate(glm::mat4(1.0f), -(float)PI/8, glm::vec3(0.0f, 1.0f, 1.0f));
+        initial_transformation = r * rx * t * rz;
+        updateModelMatrix(initial_transformation);
+        break;
+      case 5:
+        // back left
+        rz = glm::rotate(glm::mat4(1.0f), (float)PI, glm::vec3(0.0f, 0.0f, 1.0f));
+        rx = glm::rotate(glm::mat4(1.0f), (float)PI/4, glm::vec3(1.0f, 0.0f, 0.0f));
+        r = glm::rotate(glm::mat4(1.0f), (float)PI/8, glm::vec3(0.0f, 1.0f, -1.0f));
+        initial_transformation = r * rx * t * rz;
+        updateModelMatrix(initial_transformation);
+        break;
+      case 6:
+        // back right
+        rz = glm::rotate(glm::mat4(1.0f), -(float)PI, glm::vec3(0.0f, 0.0f, 1.0f));
+        rx = glm::rotate(glm::mat4(1.0f), (float)PI/4, glm::vec3(1.0f, 0.0f, 0.0f));
+        r = glm::rotate(glm::mat4(1.0f), -(float)PI/8, glm::vec3(0.0f, 1.0f, -1.0f));
+        initial_transformation = r * rx * t * rz;
+        updateModelMatrix(initial_transformation);
+        break;
+    }
+  }
+};
+
 class Hamm {
   Node *head;
   Node *torso;
   Node *nose;
+
+  Node *leg_fl;
+  Node *leg_fr;
+  Node *leg_bl;
+  Node *leg_br;
 
   int curr_selected_node;
  public:
@@ -124,7 +199,17 @@ class Hamm {
     head = new HammHead("hamm_head", 1, shaderProgram, torso);
     nose = new HammNose("hamm_nose", 2, shaderProgram, head);
 
+    leg_fl = new HammLeg("hamm_leg", 3, shaderProgram, torso);
+    leg_fr = new HammLeg("hamm_leg", 4, shaderProgram, torso);
+    leg_bl = new HammLeg("hamm_leg", 5, shaderProgram, torso);
+    leg_br = new HammLeg("hamm_leg", 6, shaderProgram, torso);
+
     torso->addChild(head);
+    torso->addChild(leg_fl);
+    torso->addChild(leg_fr);
+    torso->addChild(leg_bl);
+    torso->addChild(leg_br);
+
     head->addChild(nose);
 
     curr_selected_node = 0;
@@ -134,6 +219,11 @@ class Hamm {
     torso->render();
     head->render();
     nose->render();
+
+    leg_fl->render();
+    leg_fr->render();
+    leg_bl->render();
+    leg_br->render();
   }
 
   void rotate(GLuint axis, GLfloat angle) {
@@ -143,6 +233,19 @@ class Hamm {
         break;
       case 1:
         head->rotate(axis, angle);
+        break;
+
+      case 3:
+        leg_fl->rotate(axis, angle);
+        break;
+      case 4:
+        leg_fr->rotate(axis, angle);
+        break;
+      case 5:
+        leg_bl->rotate(axis, angle);
+        break;
+      case 6:
+        leg_br->rotate(axis, angle);
         break;
     }
   }
