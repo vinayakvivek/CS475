@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Computer Graphics - Assignment 2</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="custom.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Computer Graphics</a>
+    </nav>
+
+    <div class="container">
+
+      <div class="main">
+        <h2 id="title">Modelling Viewing Pipeline : Viewing</h2>
+        <p class="lead">Vinayak K : 150050098</p>
+        <p class="lead">Aadhavan Nambhi M : 150050103</p>
+        <br>
+        <br>
+        <p>The assignment involved parts of modelling viewing pipeline that dealt with viewing</p>
+        <p>The problem statement can be found <a href="https://www.cse.iitb.ac.in/~paragc/teaching/2017/cs475/assignments/A2.pdf">here</a></p>
+      </div>
+
+      <hr>
+
+      <br>
+      <br>
+      <div id="WCS">
+        <h3>World Coordinate System (WCS)</h3>
+        <br>
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/WCS-1.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">1</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/WCS-2.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">2</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/WCS-3.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">3</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/WCS-3-clipped.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">3 - Clipped</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <br>
+      <div id="VCS">
+        <h3>View Coordinate System (VCS)</h3>
+        <br>
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/VCS-1.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">1</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/VCS-2.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">2</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <br>
+      <div id="CCS">
+        <h3>Clip Coordinate System (CCS)</h3>
+        <br>
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/CCS-1.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">1</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/CCS-1-clipped.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">1 - Clipped</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/CCS-2.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">2</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/CCS-2-clipped.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">2 - clipped</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <br>
+      <div id="NDCS">
+        <h3>Normalized Device Coordinate System (NDCS)</h3>
+        <br>
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/NDCS-1.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">1</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/NDCS-2.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">2</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <br>
+      <div id="DCS">
+        <h3>Device Coordinate System (DCS)</h3>
+        <br>
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/DCS-1.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">1</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/DCS-1-clipped.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">1 - Clipped</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/DCS-2.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">2</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <img class="card-img-top" src="./screenshots/DCS-2-clipped.png" alt="Card image cap">
+              <div class="card-block">
+                <p class="card-text">2 - clipped</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <br>
+      <br>
+
+      <div id="usage">
+        <h3>Usage and Controls</h3>
+        <p class="text-muted">[Key : function]</p>
+        <ul class="lead">
+          <li><p><span class="key">0</span> : move to WCS (world coordinate system)</p></li>
+          <li><p><span class="key">1</span> : move to VCS (view coordinate system)</p></li>
+          <li><p><span class="key">2</span> : move to CCS (clip coordinate system)</p></li>
+          <li><p><span class="key">3</span> : move to NDCS (normalized device coordinate system)</p></li>
+          <li><p><span class="key">4</span> : move to DCS (device coordinate system)</p></li>
+
+          <li><p><span class="key">C</span> : clip the scene
+          <li><p><span class="key">V</span> : unclip (normal scene without clipping)
+
+          <li><p><span class="key">Z</span> : zoom in (keep pressing to zoom in continuously)
+          <li><p><span class="key">X</span> : zoom out
+
+          <li><p><span class="key">UP</span>, <span class="key">DOWN</span> : rotate about Y-axis (press and hold for continuous rotation)
+          <li><p><span class="key">LEFT</span>, <span class="key">RIGHT</span> : rotate about X-axis
+          <li><p><span class="key">PAGE UP</span>, <span class="key">PAGE DOWN</span> : rotate about Z-axis
+        </ul>
+      </div>
+
+      <br>
+      <br>
+      <br>
+      <div>
+        <p class="lead">Models files, model transformations, Look At point, Eye position, Up vector and Frustum coordinates are specified in the scene file <strong>myscene.scn</strong></p>
+      </div>
+
+      <br>
+      <br>
+      <br>
+    </div><!-- /.container -->
+
+  </body>
+</html>

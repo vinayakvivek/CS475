@@ -58,6 +58,15 @@ namespace toys {
     } else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
       v->selectModel(1);  // select Hamm
       return;
+    } else if (key == GLFW_KEY_J && action == GLFW_PRESS) {
+      v->toggleLight(0);
+      return;
+    } else if (key == GLFW_KEY_K && action == GLFW_PRESS) {
+      v->toggleLight(1);
+      return;
+    } else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+      v->toggleLight(2);
+      return;
     }
 
     switch (key) {
@@ -210,20 +219,6 @@ namespace toys {
         break;
       case GLFW_KEY_8:
         v->selectNode(8);
-        break;
-
-      // toggle lights
-      case GLFW_KEY_J:
-        if (action == GLFW_PRESS)
-          v->toggleLight(0);
-        break;
-      case GLFW_KEY_K:
-        if (action == GLFW_PRESS)
-          v->toggleLight(1);
-        break;
-      case GLFW_KEY_L:
-        if (action == GLFW_PRESS)
-          v->toggleLight(2);
         break;
     }
   }

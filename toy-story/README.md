@@ -10,6 +10,7 @@
 - if build succeeds, an executable `toys` will be created in `build/`
 
 ## Key bindings
+- `J`, `K` and `L`: toggle light1, light2 and spotlight respectively.
 - `B`: selects Buzz model (selected by default)
 - `H`: selects Hamm model
 - If you have selected **Buzz**, parts of Buzz can be selected by the following: [key - part]

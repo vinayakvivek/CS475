@@ -38,7 +38,8 @@ void main () {
     vec3 lightVector = lightPosition.xyz - position.xyz;
     // optional: attenuation
     float dist = length(lightVector);
-    float attenuation = 1.0 / (1.0 + 0.0001 * dist + 0.000001 * dist * dist);
+    float attenuation = 1.0 / (1.0 + 0.00001 * dist + 0.00000001 * dist * dist);
+    // float attenuation = 1.0;
 
     lightVector = normalize(lightVector);
 
@@ -66,7 +67,8 @@ void main () {
     vec3 lightVector = lightPosition.xyz - position.xyz;
     // optional: attenuation
     float dist = length(lightVector);
-    float attenuation = 1.0 / (1.0 + 0.0001 * dist + 0.000001 * dist * dist);
+    float attenuation = 1.0 / (1.0 + 0.00001 * dist + 0.0000001 * dist * dist);
+    // float attenuation = 1.0;
 
     lightVector = normalize(lightVector);
 
@@ -100,7 +102,7 @@ void main () {
       intensity = vec4(1.0f);
       base_color = vec4(1.0f);
     } else {
-      float attenuation = 1.0 / (1.0 + 0.00001 * dist + 0.0000001 * dist * dist);
+      float attenuation = 1.0 / (1.0 + 0.0000001 * dist);
 
       lightVector = normalize(lightVector);
 

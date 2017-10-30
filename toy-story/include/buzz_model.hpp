@@ -28,7 +28,7 @@ class BuzzHead : public Node {
     tex = LoadTexture("../images/buzz/face3.bmp", 256, 570);
     data = sphere(200, 30, 30);
     pivot_point = glm::vec4(0.0, 200.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     // xrot_limits[0] = -50.0; xrot_limits[1] = 30.0;
     // yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;
@@ -56,7 +56,7 @@ class BuzzNeck : public Node {
     tex = LoadTexture("../images/buzz/face3.bmp", 256, 570);
     data = cylinder(30, 30, 40);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -50.0; xrot_limits[1] = 30.0;
     yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;
@@ -90,7 +90,7 @@ class BuzzTorso : public Node {
     tex = LoadTexture("../images/buzz/suit3.bmp", 1024, 330);
     data = cylinder(60, 100, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -70.0; xrot_limits[1] = 80.0;
     yrot_limits[0] = -50.0; yrot_limits[1] = 50.0;
@@ -124,7 +124,7 @@ class BuzzHip : public Node {
     tex = LoadTexture("../images/buzz/hip.bmp", 768, 256);
     data = cylinder(60, 60, 70);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     // xrot_limits[0] = -70.0; xrot_limits[1] = 80.0;
     yrot_limits[0] = -90.0; yrot_limits[1] = 90.0;
@@ -169,7 +169,7 @@ class BuzzLeftUpperArm : public Node {
     tex = LoadTexture("../images/buzz/left_hand.bmp", 1024, 1024);
     data = cylinder(30, 20, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -0.0; xrot_limits[1] = 180.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 150.0;
@@ -204,7 +204,7 @@ class BuzzRightUpperArm : public Node {
     tex = LoadTexture("../images/buzz/right_hand.bmp", 1024, 1024);
     data = cylinder(30, 20, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -0.0; xrot_limits[1] = 180.0;
     yrot_limits[0] = -150.0; yrot_limits[1] = 0.0;
@@ -235,7 +235,7 @@ class BuzzLowerArm : public Node {
     tex = LoadTexture("../images/buzz/right_lower_hand.bmp", 1024, 1024);
     data = cylinder(20, 15, 130);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -150.0; xrot_limits[1] = 5.0;
 
@@ -272,7 +272,7 @@ class BuzzHand : public Node {
     tex = LoadTexture("../images/buzz/palm.bmp", 256, 256);
     data = cuboid(10, 20, 40);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -90.0; xrot_limits[1] = 80.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
@@ -304,7 +304,7 @@ class BuzzLeftThigh : public Node {
     tex = LoadTexture("../images/buzz/thigh.bmp", 1024, 1024);
     data = cylinder(40, 30, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -50.0; xrot_limits[1] = 80.0;
     yrot_limits[0] = -30.0; yrot_limits[1] = 30.0;
@@ -336,7 +336,7 @@ class BuzzRightThigh : public Node {
     tex = LoadTexture("../images/buzz/thigh.bmp", 1024, 1024);
     data = cylinder(40, 30, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -50.0; xrot_limits[1] = 80.0;
     yrot_limits[0] = -30.0; yrot_limits[1] = 30.0;
@@ -364,7 +364,7 @@ class BuzzLeg : public Node {
     tex = LoadTexture("../images/buzz/leg.bmp", 1024, 1024);
     data = cylinder(30, 40, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -80.0; xrot_limits[1] = 0.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
@@ -392,7 +392,7 @@ class BuzzFoot : public Node {
     tex = LoadTexture("../images/buzz/palm.bmp", 256, 256);
     data = cuboid(32, 40, 15);
     pivot_point = glm::vec4(0.0, 0.0, -20.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -10.0; xrot_limits[1] = 40.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;

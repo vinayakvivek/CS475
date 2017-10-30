@@ -22,7 +22,7 @@ class Bulb : public Node {
     tex = LoadTexture("../images/floor.bmp", 512, 512);
     data = cylinder(100, 100, 50);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -0.0; xrot_limits[1] = 0.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
@@ -56,7 +56,7 @@ class Floor : public Node {
     tex = LoadTexture("../images/floor.bmp", 512, 512);
     data = cuboid(FLOOR_LENGTH, FLOOR_LENGTH, 5);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -0.0; xrot_limits[1] = 0.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
@@ -85,7 +85,7 @@ class Ceiling : public Node {
     tex = LoadTexture("../images/wall.bmp", 1024, 1024);
     data = cuboid(FLOOR_LENGTH, FLOOR_LENGTH, 5);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -0.0; xrot_limits[1] = 0.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;
@@ -115,7 +115,7 @@ class Wall : public Node {
     tex = LoadTexture("../images/wall.bmp", 1024, 1024);
     data = cuboid(5, FLOOR_LENGTH, WALL_HEIGHT);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -0.0; xrot_limits[1] = 0.0;
     yrot_limits[0] = -0.0; yrot_limits[1] = 0.0;

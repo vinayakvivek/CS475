@@ -24,7 +24,7 @@ class HammHead : public Node {
     tex = LoadTexture("../images/hamm/head.bmp", 256, 256);
     data = sphere(150, 30, 30);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -50.0; xrot_limits[1] = 70.0;
     yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;
@@ -42,8 +42,8 @@ class HammTorso : public Node {
     local_matrix = scale;
     updateModelMatrix(local_matrix);
 
-    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(350.0f, -270.0f, -100.0f));
-    glm::mat4 initial_transformation = translate * glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(450.0f, -210.0f, -100.0f));
+    glm::mat4 initial_transformation = translate * glm::scale(glm::mat4(1.0f), 0.7f * glm::vec3(1.0f, 1.0f, 1.0f));
     updateModelMatrix(initial_transformation);
   }
 
@@ -57,7 +57,7 @@ class HammTorso : public Node {
     tex = LoadTexture("../images/hamm/pink.bmp", 256, 256);
     data = sphere(250, 30, 30);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     // xrot_limits[0] = -1000.0; xrot_limits[1] = 1000.0;
     yrot_limits[0] = -100.0; yrot_limits[1] = 100.0;
@@ -101,7 +101,7 @@ class HammNose : public Node {
     tex = LoadTexture("../images/hamm/pink.bmp", 256, 256);
     data = cylinder(100, 50, 100);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     // xrot_limits[0] = -50.0; xrot_limits[1] = 30.0;
     // yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;
@@ -130,7 +130,7 @@ class HammLeg : public Node {
     tex = LoadTexture("../images/hamm/pink.bmp", 256, 256);
     data = cylinder(40, 30, 150);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
-    std::cout << "num_vertices: " << data->num_vertices << "\n";
+    // std::cout << "num_vertices: " << data->num_vertices << "\n";
 
     xrot_limits[0] = -50.0; xrot_limits[1] = 50.0;
     yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;

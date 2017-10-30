@@ -11,7 +11,7 @@ View::View(GLfloat h_width, GLfloat h_height, GLfloat h_depth) {
 
   enable_perspective = true;
 
-  light_positions[0] = glm::vec4(400.0, 400.0, 400.0, 1.0);
+  light_positions[0] = glm::vec4(0.0, (FLOOR_LEVEL + WALL_HEIGHT) / 2, 4000.0, 1.0);
   light_positions[1] = glm::vec4(-4000.0, (FLOOR_LEVEL + WALL_HEIGHT) / 2, -4000.0, 1.0);
 
   spotlight_position[0] = glm::vec4(0.0, (FLOOR_LEVEL + WALL_HEIGHT) - 1000.0f, 1000.0f, 1.0);
@@ -192,6 +192,12 @@ void View::selectNode(int node_id) {
 }
 
 void View::zoom(GLfloat amount) {
-  c_zpos -= amount;
+  // c_zpos -= amount
+
+  glm::vec3 d = amount * glm::normalize(glm::vec3(c_xpos, c_ypos, c_zpos));
+  c_xpos -= d.x;
+  c_ypos -= d.y;
+  c_zpos -= d.z;
+
   updateCamera();
 }
