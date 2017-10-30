@@ -26,9 +26,9 @@ class HammHead : public Node {
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
-    // xrot_limits[0] = -50.0; xrot_limits[1] = 30.0;
-    // yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;
-    // zrot_limits[0] = -50.0; zrot_limits[1] = 50.0;
+    xrot_limits[0] = -50.0; xrot_limits[1] = 70.0;
+    yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;
+    zrot_limits[0] = -70.0; zrot_limits[1] = 70.0;
 
     populateBuffers();
     setInitialTransformation();
@@ -59,12 +59,20 @@ class HammTorso : public Node {
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
-    // xrot_limits[0] = -50.0; xrot_limits[1] = 30.0;
-    // yrot_limits[0] = -70.0; yrot_limits[1] = 70.0;
-    // zrot_limits[0] = -50.0; zrot_limits[1] = 50.0;
+    // xrot_limits[0] = -1000.0; xrot_limits[1] = 1000.0;
+    yrot_limits[0] = -100.0; yrot_limits[1] = 100.0;
+    // zrot_limits[0] = -1000.0; zrot_limits[1] = 1000.0;
 
     populateBuffers();
     setInitialTransformation();
+  }
+
+  void rotate(GLuint axis, GLfloat angle) {
+    Node::rotate(axis, angle);
+    if (axis == 1) {
+      yrot_limits[0] -= angle;
+      yrot_limits[1] += angle;
+    }
   }
 };
 
@@ -116,6 +124,8 @@ class Hamm {
 
     torso->addChild(head);
     head->addChild(nose);
+
+    curr_selected_node = 0;
   }
 
   void render() {

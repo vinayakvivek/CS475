@@ -126,12 +126,20 @@ class BuzzHip : public Node {
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
-    xrot_limits[0] = -70.0; xrot_limits[1] = 80.0;
+    // xrot_limits[0] = -70.0; xrot_limits[1] = 80.0;
     yrot_limits[0] = -90.0; yrot_limits[1] = 90.0;
-    zrot_limits[0] = -50.0; zrot_limits[1] = 50.0;
+    // zrot_limits[0] = -50.0; zrot_limits[1] = 50.0;
 
     populateBuffers();
     setInitialTransformation();
+  }
+
+  void rotate(GLuint axis, GLfloat angle) {
+    Node::rotate(axis, angle);
+    if (axis == 1) {
+      yrot_limits[0] -= angle;
+      yrot_limits[1] += angle;
+    }
   }
 };
 

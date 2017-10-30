@@ -50,6 +50,10 @@ namespace toys {
       glfwSetWindowShouldClose(window, GL_TRUE);
     else if (key == GLFW_KEY_P && action == GLFW_PRESS)
       v->togglePerspective();
+    else if (key == GLFW_KEY_B && action == GLFW_PRESS)
+      v->selectModel(0);  // select buzz
+    else if (key == GLFW_KEY_H && action == GLFW_PRESS)
+      v->selectModel(1);  // select Hamm
 
     switch (key) {
       // rotation

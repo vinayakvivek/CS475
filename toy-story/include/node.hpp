@@ -68,7 +68,7 @@ class Node {
     const GLuint &shaderProgram,
     Node *parent);
   void addChild(Node *node);
-  void rotate(GLuint axis, GLfloat angle);
+  virtual void rotate(GLuint axis, GLfloat angle);
   void translate(const glm::vec3 &trans);
   void updateModelMatrix(const glm::mat4 &transformation);
   void render();
