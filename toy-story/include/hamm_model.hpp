@@ -42,8 +42,8 @@ class HammTorso : public Node {
     local_matrix = scale;
     updateModelMatrix(local_matrix);
 
-    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(350.0f, -150.0f, -100.0f));
-    glm::mat4 initial_transformation = glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f));
+    glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(350.0f, -270.0f, -100.0f));
+    glm::mat4 initial_transformation = translate * glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f));
     updateModelMatrix(initial_transformation);
   }
 
@@ -70,10 +70,10 @@ class HammTorso : public Node {
   }
 
   void rotate(GLuint axis, GLfloat angle) {
-    Node::rotate(axis, angle);
     if (axis == 1) {
-      yrot_limits[0] -= angle;
-      yrot_limits[1] += angle;
+      Node::rotate(axis, angle);
+      yrot_limits[0] -= 1.0;
+      yrot_limits[1] += 1.0;
     }
   }
 };

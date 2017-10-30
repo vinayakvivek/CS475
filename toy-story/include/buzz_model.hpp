@@ -137,13 +137,12 @@ class BuzzHip : public Node {
   }
 
   void rotate(GLuint axis, GLfloat angle) {
-    Node::rotate(axis, angle);
     if (axis == 1) {
-      yrot_limits[0] -= angle;
-      yrot_limits[1] += angle;
+      Node::rotate(axis, angle);
+      yrot_limits[0] -= 1.0;
+      yrot_limits[1] += 1.0;
     }
   }
-
 
 };
 
@@ -270,8 +269,8 @@ class BuzzHand : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
-    data = cylinder(20, 20, 20);
+    tex = LoadTexture("../images/buzz/palm.bmp", 256, 256);
+    data = cuboid(10, 20, 40);
     pivot_point = glm::vec4(0.0, 0.0, 0.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
 
@@ -390,7 +389,7 @@ class BuzzFoot : public Node {
     const GLuint &shaderProgram,
     Node *parent): Node(name, id, shaderProgram, parent) {
 
-    tex = LoadTexture("../images/buzz/suit2.bmp", 768, 512);
+    tex = LoadTexture("../images/buzz/palm.bmp", 256, 256);
     data = cuboid(32, 40, 15);
     pivot_point = glm::vec4(0.0, 0.0, -20.0, 1.0);
     std::cout << "num_vertices: " << data->num_vertices << "\n";
