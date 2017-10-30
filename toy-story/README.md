@@ -10,7 +10,6 @@
 - if build succeeds, an executable `toys` will be created in `build/`
 
 ## Key bindings
-  [Key : function]
 - `B`: selects Buzz model (selected by default)
 - `H`: selects Hamm model
 - If you have selected **Buzz**, parts of Buzz can be selected by the following: [key - part]
@@ -36,3 +35,11 @@
     - `4` - Front Right Leg
     - `5` - Back Left Leg
     - `6` - Back Right Leg
+- After selecting, parts can be rotated. (each part have rotational restrictions!)
+    - `W`, `S` - along Y-axis
+    - `A`, `D` - along X-axis
+    - `Q`, `E` - along Z-axis
+- If you have selected `0`th node in a model (select model, press `0`), then the model can be translated by pressing `SHIFT` + [`A`, `D`, `Q`, `E`]
+- Camera can be rotated using `ARROW` keys, `PAGE UP` and `PAGE DOWN`.
+- Camera can be translated using `SHIFT` + [`ARROW` keys, `PAGE UP`, `PAGE DOWN`].
+  
