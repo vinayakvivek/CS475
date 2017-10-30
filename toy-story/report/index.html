@@ -155,7 +155,7 @@
       <br>
       <br>
 
-      <div id="usage">
+      <div id="usage" class="lead">
         <h3>Key bindings</h3>
         <p class="text-muted">[Key : function]</p>
 
@@ -202,9 +202,9 @@
               <li><p><span class="key">Q</span>, <span class="key">E</span> - along Z-axis</p></li>
             </ul>
           </li>
-          <li>If you have selected <span class="key">0</span>th node in a model (select model, press <span class="key">0</span>), then the model can be translated by pressing <span class="key">SHIFT</span> + [</span>A</span>, <span class="key">D</span>, <span class="key">Q</span>, <span class="key">E</span>]</li>
-          <li>Camera can be rotated using <span class="key">ARROW</span> keys, <span class="key">PAGE UP</span> and <span class="key">PAGE DOWN</span>.</li>
-          <li>Camera can be translated using <span class="key">SHIFT</span> + [</span>ARROW</span> keys, <span class="key">PAGE UP</span>, <span class="key">PAGE DOWN</span>].</li>
+          <li>If you have selected <span class="key">0</span>th node in a model (select model, press <span class="key">0</span>), then the model can be translated by pressing <span class="key">SHIFT</span> + [<span class="key">A</span>, <span class="key">D</span>, <span class="key">Q</span>, <span class="key">E</span>]</li>
+          <li>Camera can be rotated using <span class="key">ARROW keys</span>, <span class="key">PAGE UP</span> and <span class="key">PAGE DOWN</span>.</li>
+          <li>Camera can be translated using <span class="key">SHIFT</span> + [<span class="key">ARROW keys</span>, <span class="key">PAGE UP</span>, <span class="key">PAGE DOWN</span>].</li>
           <li>Use <span class="key">Z</span> and <span class="key">X</span> to zoom in and out camera respectively.</li>
         </ul>
 
@@ -213,8 +213,13 @@
       <br>
       <br>
       <br>
-      <div>
-        <p class="lead">YO</strong></p>
+      <div class="container lead">
+        <h3>Main classes</h3>
+        <p><strong>Node </strong> : every object is an Object of Node or any class which inherited from Node (like `BuzzHead`)</p>
+        <p><strong>View </strong> : contains models, camera parameters, etc. Main function initialized one object of View class. View::render() renders the whole scene.</p>
+        <p><strong>Buzz </strong>(in `buzz_model.hpp`) : contains all the parts (Node objects) of Buzz</p>
+        <p><strong>Hamm </strong>(in `hamm_model.hpp`) : contains all the parts (Node objects) of Hamm</p>
+
       </div>
 
       <br>

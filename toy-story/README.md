@@ -2,6 +2,7 @@
 
 ## Compiling
 ```bash
+    cd <project_dir>
 	mkdir build
 	cd build
 	cmake ..
